@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Orçamentos de Energia Solar</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div class="container-fluid">
+    <h1>Orçamentos de Energia Solar</h1>
+    <hr>
+    <button class="btn btn-success" id="btnNovoOrcamento" data-bs-toggle="modal" data-bs-target="#orcamentoModal">Novo Orçamento</button>
+    
+
+   <div style="margin-bottom: 15px;margin-top: 15px;" id="divFiltrosOrcamentos">
+      <label for="filtro" class="fw-bold text-dark">Filtro:</label>
+      <form method="GET" action="/admin/orcamentos" class="d-flex gap-2 align-items-stretch">
+      
+      <!-- Campo de texto -->
+       
+      <input id="filtro" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." class="form-control" value="<%= valorFiltro || '' %>">
+
+      <!-- Campo oculto com tipo de filtro -->
+      <input type="hidden" name="campo" id="campoFiltroInput" value="<%= campoFiltro || 'cliente' %>">
+
+      <!-- Dropdown customizado -->
+      <div class="dropdown-custom position-relative">
+        <button id="btnEscolherFiltro" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 160px;">
+          <span id="filtroSelecionadoTexto">
+            <%= campoFiltro ? ({
+              cliente: 'Cliente',
+              status: 'Status',
+              servico: 'Serviço',
+              tipo_cliente: 'Tipo Cliente'
+            }[campoFiltro]) : 'Filtros' %>
+          </span>
+          <i class="fas fa-chevron-down ms-2"></i>
+        </button>
+        <ul id="filtroDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
+          <li class="list-group-item itemFiltro" data-campo="cliente">Cliente</li>
+          <li class="list-group-item itemFiltro" data-campo="status">Status</li>
+          <li class="list-group-item itemFiltro" data-campo="servico">Serviço</li>
+          <li class="list-group-item itemFiltro" data-campo="tipo_cliente">Tipo Cliente</li>
+        </ul>
+      </div>
+
+      <!-- Botão buscar -->
+      <button class="btn btn-secondary d-flex align-items-center" type="submit" id="btnFiltrar">
+        <i class="fas fa-search me-1"></i> Buscar
+      </button>
+
+      <!-- Botão limpar -->
+      <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltros">
+        <i class="fas fa-times me-1"></i> Limpar
+      </button>
+    </form>
+  </div>
+
+
+
+    <div class="modal fade" id="orcamentoModal" tabindex="-1" aria-labelledby="modalOrcamentoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+          <form id="formOrcamento">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="modalOrcamentoLabel">
+                <i class="bi bi-file-earmark-text-fill me-2"></i>Cadastro de Orçamento
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body p-4">
+              <input type="hidden" id="orcamentoId" name="id">
+
+              <!-- Cliente -->
+              <a href="/admin/clientes" style="text-decoration: none;">
+                <div class="d-flex align-items-center gap-2 text-primary mb-2">
+                  <i class="fas fa-user me-2"></i>
+                  <h5 class="mb-0">Cliente</h5>
+                </div>
+              </a>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="cliente_id" class="form-label">Nome</label>
+                  <select id="cliente_id" class="form-select" name="cliente_id" required>
+                    <option value="" selected disabled>Selecione um cliente...</option>
+                    <% clientes.forEach(c => { %>
+                      <option 
+                        value="<%= c.id %>"
+                        data-telefone="<%= c.telefone %>"
+                        data-cpf_cnpj="<%= c.cpf_cnpj %>"
+                        data-email="<%= c.email %>"
+                        data-logradouro="<%= c.logradouro %>"
+                        data-numero="<%= c.numero %>"
+                        data-complemento="<%= c.complemento %>"
+                        data-cidade="<%= c.cidade %>"
+                        data-estado="<%= c.estado %>"
+                        data-cep="<%= c.cep %>"
+                      >
+                        <%= c.nome_completo %>
+                      </option>
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="telefone" class="form-label">Telefone</label>
+                  <input type="text" class="form-control" id="telefone" disabled>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="cpf_cnpj" class="form-label">CPF/CNPJ</label>
+                  <input type="text" class="form-control" id="cpf_cnpj" disabled>
+                </div>
+                <div class="col-md-4">
+                  <label for="email" class="form-label">E-mail</label>
+                  <input type="text" class="form-control" id="email" disabled>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="logradouro" class="form-label">Logradouro</label>
+                  <input type="text" class="form-control" id="logradouro" disabled>
+                </div>
+                <div class="col-md-2">
+                  <label for="numero" class="form-label">Número</label>
+                  <input type="text" class="form-control" id="numero" disabled>
+                </div>
+                <div class="col-md-4">
+                  <label for="complemento" class="form-label">Complemento</label>
+                  <input type="text" class="form-control" id="complemento" disabled>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <div class="col-md-3">
+                  <label for="cidade" class="form-label">Cidade</label>
+                  <input type="text" class="form-control" id="cidade" disabled>
+                </div>
+                <div class="col-md-3">
+                  <label for="estado" class="form-label">Estado</label>
+                  <input type="text" class="form-control" id="estado" disabled>
+                </div>
+                <div class="col-md-3">
+                  <label for="cep" class="form-label">CEP</label>
+                  <input type="text" class="form-control" id="cep" disabled>
+                </div>
+              </div>
+
+              <!-- Consumo -->
+              <div class="d-flex align-items-center gap-2 text-primary mb-2">
+                <i class="fas fa-bolt me-2"></i>
+                <h5 class="mb-0">Consumo</h5>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <label for="media_consumo" class="form-label">Média mensal (kWh)</label>
+                  <input type="number" step="0.1" class="form-control" id="media_consumo" name="media_consumo" required>
+                </div>
+                <div class="col-md-4">
+                  <label for="concessionaria" class="form-label">Concessionária</label>
+                  <input type="text" class="form-control" id="concessionaria" name="concessionaria">
+                </div>
+                <div class="col-md-4">
+                  <label for="tipo_cliente" class="form-label">Tipo de Cliente</label>
+                  <select id="tipo_cliente" class="form-select" name="tipo_cliente" required>
+                    <option value="Residencial">Residencial</option>
+                    <option value="Comercial">Comercial</option>
+                    <option value="Industrial">Industrial</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Sistema Proposto -->
+              <div class="d-flex align-items-center gap-2 text-primary mb-2">
+                <i class="fas fa-solar-panel me-2"></i>
+                <h5 class="mb-0">Sistema Proposto</h5>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <label for="tipo_sistema" class="form-label">Tipo de Sistema</label>
+                  <select id="tipo_sistema" class="form-select" name="tipo_sistema" required>
+                    <option value="on-grid">On-Grid</option>
+                    <option value="off-grid">Off-Grid</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="capacidade_kwp" class="form-label">Capacidade (kWp)</label>
+                  <input type="number" class="form-control" id="capacidade_kwp" name="capacidade_kwp" step="0.1" required>
+                </div>
+              </div>
+
+              <!-- Equipamentos -->
+              
+                <div class="d-flex align-items-center gap-2 text-primary mb-2">
+                  <i class="fas fa-tools me-2"></i>
+                  <a href="/admin/equipamentos" style="text-decoration: none;"><h5 class="mb-0">Equipamentos</h5></a>
+                </div>
+              
+              <div id="equipamentosContainer" class="mb-3">
+                <!-- Equipamentos serão inseridos aqui dinamicamente -->
+              </div>
+              <button type="button" class="btn btn-outline-primary mb-4" id="addEquipamento">
+                <i class="bi bi-plus-circle me-1"></i>Adicionar Equipamento
+              </button>
+
+              <!-- Serviços -->
+              <div class="mb-4">
+                <label for="servico_id" class="form-label">Serviços Inclusos</label>
+                <select class="form-select" id="servico_id" name="servico_id">
+                  <% custos.forEach(s => { %>
+                    <option value="<%= s.id %>" data-valor="<%= s.valor %>">
+                      <%= s.descricao %> - R$ <%= s.valor %>
+                    </option>
+
+                  <% }) %>
+                </select>
+              </div>
+
+              <!-- Financeiro -->
+              <div class="d-flex align-items-center gap-2 text-primary mb-2">
+                <i class="fas fa-dollar-sign me-2"></i>
+                <h5 class="mb-0">Financeiro</h5>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-3">
+                  <label for="valor_total" class="form-label">Valor Total (R$)</label>
+                  <input type="number" step="0.01" class="form-control" id="valor_total" name="valor_total" required>
+                </div>
+                <div class="col-md-3">
+                  <label for="desconto" class="form-label">Desconto (%)</label>
+                  <input type="number" step="0.01" class="form-control" id="desconto" name="desconto">
+                </div>
+                <div class="col-md-3">
+                  <label for="condicoes_pagamento" class="form-label">Condições de Pagamento</label>
+                  <select class="form-select" id="condicoes_pagamento" name="condicoes_pagamento">
+                    <option value="">Selecione...</option>
+                    <option value="Crédito">Crédito</option>
+                    <option value="À vista">À vista</option>
+                    <option value="Financiamento">Financiamento</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="economia_estimada" class="form-label">Economia Estimada (%)</label>
+                  <input type="number" step="0.1" class="form-control" id="economia_estimada" name="economia_estimada">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="status" class="form-label">Status do Orçamento</label>
+                <select class="form-select" id="status" name="status">
+                  <option value="Aberto">Aberto</option>
+                  <option value="Aprovado">Aprovado</option>
+                  <option value="Em andamento">Em Andamento</option>
+                  <option value="Reprovado">Reprovado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="modal-footer bg-light">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="btnSalvarOrcamento">
+                <i class="bi bi-save me-1"></i>Salvar Orçamento
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Tabela de Orçamentos -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Tipo de Cliente</th>
+          <th>Forma de Pagamento</th>
+          <th>Valor Total (R$)</th>
+          <th>Custo Serviço</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaOrcamentos">
+            <% orcamentos.forEach(o => { %>
+            <tr>
+                <td><%= o.id %></td>
+                <td><%= o.cliente_nome %></td>
+                <td><%= o.tipo_cliente %></td>
+                <td><%= o.condicoes_pagamento %></td>
+                <td>R$ <%= Number(o.valor_total).toFixed(2).replace('.', ',') %></td>
+                <td><%= o.servico_descricao %></td>  <!-- Agora estamos usando o servico_descricao -->
+                <td><%= o.status %></td>
+                <td>
+                <button class="btn btn-warning btnEditarOrcamento" data-id="<%= o.id %>"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btnExcluirOrcamento" data-id="<%= o.id %>"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-info btnVisualizarOrcamento" data-id='<%= o.id %>'>
+                    <i class="fas fa-eye"></i>
+                </button> 
+                </td>
+            </tr>
+            <% }) %>
+     </tbody>
+
+    </table>
+  </div>
+
+        
+    <!-- Modal de Visualização de Orçamento -->
+<div class="modal fade" id="modalVisualizarOrcamento" tabindex="-1" aria-labelledby="modalVisualizarOrcamentoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalVisualizarOrcamentoLabel"><i class="fas fa-file-invoice-dollar me-2"></i>Detalhes do Orçamento</h5>
+                <button id="btnExportarPdf" onclick="exportarModalParaPDF()" class="btn btn-info ms-2">Exportar para PDF</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Cliente -->
+                <h6 class="text-primary"><i class="fas fa-user me-2"></i>Cliente</h6>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item"><strong>Nome:</strong> <span id="v_cliente_nome"></span></li>
+                    <li class="list-group-item"><strong>Telefone:</strong> <span id="v_cliente_telefone"></span></li>
+                    <li class="list-group-item"><strong>CPF/CNPJ:</strong> <span id="v_cliente_cpf_cnpj"></span></li>
+                    <li class="list-group-item"><strong>Email:</strong> <span id="v_cliente_email"></span></li>
+                    <li class="list-group-item"><strong>Endereço:</strong> 
+                        <span id="v_cliente_logradouro"></span>, 
+                        <span id="v_cliente_numero"></span>, 
+                        <span id="v_cliente_complemento"></span> – 
+                        <span id="v_cliente_cidade"></span>/<span id="v_cliente_estado"></span> – CEP: 
+                        <span id="v_cliente_cep"></span>
+                    </li>
+                </ul>
+
+                <!-- Consumo e Sistema -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary"><i class="fas fa-bolt me-2"></i>Consumo</h6>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item"><strong>Média Consumo (kWh):</strong> <span id="v_media_consumo"></span></li>
+                            <li class="list-group-item"><strong>Concessionária:</strong> <span id="v_concessionaria"></span></li>
+                            <li class="list-group-item"><strong>Tipo de Cliente:</strong> <span id="v_tipo_cliente"></span></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary"><i class="fas fa-solar-panel me-2"></i>Sistema</h6>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item"><strong>Tipo de Sistema:</strong> <span id="v_tipo_sistema"></span></li>
+                            <li class="list-group-item"><strong>Capacidade (kWp):</strong> <span id="v_capacidade_kwp"></span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Equipamentos -->
+                <h6 class="text-primary"><i class="fas fa-tools me-2"></i>Equipamentos</h6>
+                <div class="table-responsive mb-3" id="v_equipamentos_tabela">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Quantidade</th>
+                                <th>Valor Unitário (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Preenchido dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Financeiro -->
+                <h6 class="text-primary"><i class="fas fa-dollar-sign me-2"></i>Financeiro</h6>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item"><strong>Valor Total:</strong> R$ <span id="v_valor_total"></span></li>
+                    <li class="list-group-item"><strong>Desconto:</strong> <span id="v_desconto"></span></li>
+                    <li class="list-group-item"><strong>Condições de Pagamento:</strong> <span id="v_condicoes_pagamento"></span></li>
+                    <li class="list-group-item"><strong>Economia Estimada:</strong> <span id="v_economia_estimada"></span></li>
+                    <li class="list-group-item"><strong>Serviço Incluso:</strong> <span id="v_servico_descricao"></span></li>
+                    <li class="list-group-item"><strong>Status:</strong> <span id="v_status"></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.getElementById('cliente_id').addEventListener('change', function () {
+            const selected = this.selectedOptions[0];
+
+            document.getElementById('telefone').value = selected.dataset.telefone || '';
+            document.getElementById('cpf_cnpj').value = selected.dataset.cpf_cnpj || '';
+            document.getElementById('email').value = selected.dataset.email || '';
+            document.getElementById('logradouro').value = selected.dataset.logradouro || '';
+            document.getElementById('numero').value = selected.dataset.numero || '';
+            document.getElementById('complemento').value = selected.dataset.complemento || '';
+            document.getElementById('cidade').value = selected.dataset.cidade || '';
+            document.getElementById('estado').value = selected.dataset.estado || '';
+            document.getElementById('cep').value = selected.dataset.cep || '';
+        });
+    </script>
+
+
+
+   <script>
+        document.querySelectorAll('.btnVisualizarOrcamento').forEach(botao => {
+        botao.addEventListener('click', async function () {
+        const id = this.dataset.id;
+    
+        try {
+            const resposta = await fetch(`/admin/orcamentos/${id}`);
+            const dados = await resposta.json();
+    
+            const orc = dados.orcamento;
+            const equipamentos = dados.equipamentos;
+    
+            document.getElementById('v_cliente_nome').innerText = orc.cliente_nome;
+            document.getElementById('v_cliente_telefone').innerText = orc.cliente_telefone || '';
+            document.getElementById('v_cliente_cpf_cnpj').innerText = orc.cliente_cpf_cnpj || '';
+            document.getElementById('v_cliente_email').innerText = orc.cliente_email || '';
+            document.getElementById('v_cliente_logradouro').innerText = orc.cliente_logradouro || '';
+            document.getElementById('v_cliente_numero').innerText = orc.cliente_numero || '';
+            document.getElementById('v_cliente_complemento').innerText = orc.cliente_complemento || '';
+            document.getElementById('v_cliente_cidade').innerText = orc.cliente_cidade || '';
+            document.getElementById('v_cliente_estado').innerText = orc.cliente_estado || '';
+            document.getElementById('v_cliente_cep').innerText = orc.cliente_cep || '';
+
+
+    
+            // Consumo
+            document.getElementById('v_media_consumo').innerText = orc.media_consumo_kwh;
+            document.getElementById('v_concessionaria').innerText = orc.concessionaria;
+            document.getElementById('v_tipo_cliente').innerText = orc.tipo_cliente;
+    
+            // Sistema
+            document.getElementById('v_tipo_sistema').innerText = orc.tipo_sistema;
+            document.getElementById('v_capacidade_kwp').innerText = orc.capacidade_kwp;
+    
+            // Equipamentos
+            const tabela = document.getElementById('v_equipamentos_tabela').querySelector('tbody');
+            tabela.innerHTML = '';
+            equipamentos.forEach(eq => {
+            const tr = document.createElement('tr');
+
+            tr.innerHTML = `
+                <td>${eq.nome}</td>
+                <td>${eq.marca}</td>
+                <td>${eq.modelo}</td>
+                <td>${eq.quantidade}</td>
+                <td>${Number(eq.valor_unitario).toFixed(2)}</td>
+            `;
+
+            tabela.appendChild(tr);
+            });
+
+    
+            // Financeiro
+            document.getElementById('v_valor_total').innerText = Number(orc.valor_total).toFixed(2);
+            document.getElementById('v_desconto').innerText = orc.desconto;
+            document.getElementById('v_condicoes_pagamento').innerText = orc.condicoes_pagamento;
+            document.getElementById('v_economia_estimada').innerText = orc.economia_estimativa;
+            document.getElementById('v_servico_descricao').innerText = orc.servico_descricao;
+            document.getElementById('v_status').innerText = orc.status;
+    
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById('modalVisualizarOrcamento'));
+            modal.show();
+        } catch (error) {
+            console.error("Erro ao buscar dados do orçamento:", error);
+            alert("Erro ao carregar os dados do orçamento.");
+        }
+        });
+    });
+    </script>
+
+
+  <script>
+      function atualizarValorTotal() {
+          let totalEquipamentos = 0;
+
+          document.querySelectorAll('.row.equipamento-item').forEach(row => {
+              const qtdInput = row.querySelector('input[name$=".quantidade"]');
+              const valorInput = row.querySelector('input[name$=".valorUnitario"]');
+
+              const quantidade = parseFloat(qtdInput?.value) || 0;
+              const valorUnitario = parseFloat(valorInput?.value) || 0;
+
+              totalEquipamentos += quantidade * valorUnitario;
+          });
+
+          // Captura o valor do serviço selecionado
+          const servicoSelect = document.getElementById('servico_id');
+          const servicoSelecionado = servicoSelect?.selectedOptions[0];
+          const valorServico = parseFloat(servicoSelecionado?.dataset.valor) || 0;
+
+          const totalGeral = totalEquipamentos + valorServico;
+
+          document.getElementById('valor_total').value = totalGeral.toFixed(2);
+      }
+
+
+        const equipamentos = <%- JSON.stringify(equipamentos) %>;
+        let equipamentoIndex = 0;
+        document.getElementById('addEquipamento').addEventListener('click', function () {
+          const container = document.getElementById('equipamentosContainer');
+
+          // Evento para atualizar valor e estoque
+          document.addEventListener('change', function (e) {
+            if (e.target.classList.contains('equipamento-select')) {
+              const selectedOption = e.target.selectedOptions[0];
+              const valor = selectedOption.getAttribute('data-valor');
+              const estoque = selectedOption.getAttribute('data-estoque');
+
+              const valorInputId = e.target.getAttribute('data-valor-id');
+              const estoqueId = e.target.getAttribute('data-estoque-id');
+
+              document.getElementById(valorInputId).value = valor || '';
+              document.getElementById(estoqueId).value = estoque || '';
+            }
+          });
+
+          const selectId = `equipamento_id_${equipamentoIndex}`;
+          const valorInputId = `valor_unitario_${equipamentoIndex}`;
+          const estoqueId = `estoque_${equipamentoIndex}`;
+
+          const div = document.createElement('div');
+          div.className = 'row mb-2 align-items-end equipamento-item';
+          div.innerHTML = `
+            <div class="col-md-4">
+              <label class="form-label">Equipamento</label>
+              <select class="form-select equipamento-select" 
+                name="equipamentos[${equipamentoIndex}].equipamentoId" 
+                id="${selectId}" 
+                data-valor-id="${valorInputId}" 
+                data-estoque-id="${estoqueId}">
+                <option value="">Selecione</option>
+                ${equipamentos.map(eq => 
+                  `<option value="${eq.id}" data-valor="${eq.valor}" data-estoque="${eq.quantidade_estoque}">
+                    ${eq.nome} - ${eq.marca} - ${eq.modelo}
+                  </option>`
+                ).join('')}
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Qtd. Estoque</label>
+              <input type="number" class="form-control" id="${estoqueId}" disabled>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Quantidade</label>
+              <input type="number" name="equipamentos[${equipamentoIndex}].quantidade" class="form-control" min="1" value="1">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Valor Unitário (R$)</label>
+              <input type="number" name="equipamentos[${equipamentoIndex}].valorUnitario" class="form-control" id="${valorInputId}" step="0.01" readonly>
+            </div>
+            <div class="col-md-1 text-end">
+              <button type="button" class="btn btn-danger btnRemoverEquipamento">&times;</button>
+            </div>
+          `;
+
+          // ADICIONA A DIV CRIADA AO DOM!
+          container.appendChild(div);
+          atualizarValorTotal(); // <-- Adicionado aqui
+          equipamentoIndex++;
+
+
+          // Incrementa o índice para o próximo equipamento
+          equipamentoIndex++;
+        });
+
+
+
+
+    // Remover equipamento
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('btnRemoverEquipamento')) {
+        e.target.closest('.row').remove();
+        atualizarValorTotal(); // Atualiza após remoção
+      }
+    });
+        // Atualizar o total ao mudar o serviço
+      document.getElementById('servico_id').addEventListener('change', atualizarValorTotal);
+
+      // Atualizar o total ao mudar quantidade de equipamentos
+      document.addEventListener('input', function (e) {
+        if (e.target.name && e.target.name.includes('.quantidade')) {
+          atualizarValorTotal();
+        }
+      });
+
+      // Atualizar o total ao trocar o equipamento (porque muda o valor unitário)
+      document.addEventListener('change', function (e) {
+        if (e.target.classList.contains('equipamento-select')) {
+          atualizarValorTotal();
+        }
+  });
+  </script>
+
+  <script>
+    // Toggle do dropdown
+    const btnFiltro = document.getElementById("btnEscolherFiltro");
+    const dropdown = document.getElementById("filtroDropdown");
+
+    btnFiltro.addEventListener("click", () => {
+      dropdown.classList.toggle("d-none");
+    });
+
+    document.querySelectorAll(".itemFiltro").forEach(item => {
+      item.addEventListener("click", function () {
+        const campo = this.getAttribute("data-campo");
+        document.getElementById("campoFiltroInput").value = campo;
+        btnFiltro.querySelector("#filtroSelecionadoTexto").textContent = this.textContent;
+        dropdown.classList.add("d-none");
+      });
+    });
+
+    // Fecha dropdown se clicar fora
+    document.addEventListener("click", function (e) {
+      if (!btnFiltro.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add("d-none");
+      }
+    });
+
+    // Validação do filtro
+    document.getElementById("btnFiltrar").addEventListener("click", function (e) {
+      const campo = document.getElementById("campoFiltroInput").value;
+      const valor = document.getElementById("filtro").value.trim();
+      if (!campo || !valor) {
+        e.preventDefault();
+        Swal.fire("Atenção", "Selecione um filtro e digite um valor!", "warning");
+      }
+    });
+
+    // Botão limpar filtros
+    document.getElementById("btnLimparFiltros").addEventListener("click", function () {
+      window.location.href = "/admin/orcamentos";
+    });
+  </script>
+
+  <script>
+function exportarModalParaPDF() {
+    const modal = document.querySelector('#modalVisualizarOrcamento .modal-content');
+    
+    // Clona o modal para evitar modificar o original
+    const conteudo = modal.cloneNode(true);
+
+    // Remove o botão "Exportar para PDF" do clone
+    const botaoExportar = conteudo.querySelector('#btnExportarPdf');
+    if (botaoExportar) botaoExportar.remove();
+
+    // Cria nova janela
+    const janela = window.open('', '_blank', 'width=1000,height=800');
+
+    janela.document.write(`
+        <html>
+        <head>
+            <title>Orçamento - SOL RADIANTE</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+            <style>
+                body {
+                    padding: 20px;
+                    background-color: white;
+                    font-size: 12px;
+                }
+                header {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+                header img {
+                    height: 60px;
+                }
+                header h1 {
+                    font-size: 24px;
+                    margin: 0;
+                    color: #0d6efd;
+                }
+                .modal-header {
+                    border-bottom: 1px solid #dee2e6;
+                }
+                .modal-content {
+                    box-shadow: none !important;
+                    border: none !important;
+                }
+                .list-group-item {
+                    border: 1px solid #dee2e6 !important;
+                    padding: 4px 8px;
+                }
+                table th, table td {
+                    border: 1px solid #dee2e6 !important;
+                    padding: 4px 8px !important;
+                    vertical-align: middle !important;
+                }
+                th {
+                    background-color: #f8f9fa !important;
+                }
+            </style>
+        </head>
+        <body>
+            <header>
+                <img src="/admin-template/images/logos/images.png" alt="Logo" />
+                <h1>SOL RADIANTE</h1>
+            </header>
+        </body>
+        </html>
+    `);
+
+    // Adiciona o conteúdo clonado ao corpo do PDF
+    janela.document.body.appendChild(conteudo);
+
+    // Aguarda a renderização antes de imprimir
+    janela.document.close();
+    janela.focus();
+
+    setTimeout(() => {
+        janela.print();
+        janela.close();
+    }, 500);
+}
+</script>
+
+
+  <script src="/js/admin/addOrcamento.js"></script>
+  <script src="/js/admin/editarOrcamento.js"></script>
+</body>
+</html>

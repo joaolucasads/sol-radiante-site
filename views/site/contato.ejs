@@ -1,0 +1,255 @@
+<style>
+  #contatoForm .form-control,
+  #contatoForm select,
+  #contatoForm textarea {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    font-size: 1rem;
+    transition: border 0.3s, box-shadow 0.3s;
+  }
+
+  #contatoForm .form-control:focus,
+  #contatoForm select:focus,
+  #contatoForm textarea:focus {
+    border-color: #fbbf24; /* amarelo solar */
+    box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.2);
+    outline: none;
+  }
+
+  #contatoForm textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  #contatoForm button[type="submit"] {
+    background-color: #f59e0b;
+    color: white;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  #contatoForm button[type="submit"]:hover {
+    background-color: #d97706;
+  }
+</style>
+
+
+<!-- Page Title -->
+<div class="page-title accent-background">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+      <h1 class="mb-2 mb-lg-0">Contact</h1>
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li class="current">Contact</li>
+        </ol>
+      </nav>
+    </div>
+  </div><!-- End Page Title -->
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact section">
+
+    <div class="mb-5">
+      
+    <iframe 
+      style="width: 100%; height: 400px;" 
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3695.678320746842!2d-51.45015529999999!3d-22.1382373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9493f32e3a36dfcb%3A0x8d12b8be869e828e!2sSol%20Radiante%20Energia%20Solar!5e0!3m2!1spt-BR!2sbr!4v1747434659644!5m2!1spt-BR!2sbr" 
+      frameborder="0" 
+      allowfullscreen="">
+    </iframe>
+  </div><!-- End Google Maps -->
+
+    <div class="container" data-aos="fade">
+
+      <div class="row gy-5 gx-lg-5">
+
+        <div class="col-lg-4">
+
+          <div class="info">
+            <h3>Faça seu orçamento</h3>
+            <p>Energia solar é o futuro!</p>
+
+            <div class="info-item d-flex">
+              <i class="bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h4>Localização:</h4>
+                <p>Meridional Shopping - Ana Jacinta , 19064-002</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex">
+              <i class="bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h4>Email:</h4>
+                <p>solradianteenergiasolar@gmail.com</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex">
+              <i class="bi bi-phone flex-shrink-0"></i>
+              <div>
+                <h4>Telefone:</h4>
+                <p>(18) 99824-9164</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex">
+              <i class="bi bi-whatsapp"></i>
+              <a href="https://api.whatsapp.com/send?phone=5518998249164&text=Oi!%20Gostaria%20de%20um%20or%C3%A7amento%20gratuito!%20%F0%9F%98%84" style="margin-top: 8px;" target="_blank">
+                <h4>Contate-nos</h4>
+                CLIQUE AQUI
+              </a>
+            </div><!-- End Info Item -->
+            
+          </div>
+
+        </div>
+
+         <div class="col-lg-8 bg-light p-4 shadow rounded">
+            <form id="contatoForm" role="form" novalidate>
+              <div class="row">
+                <div class="col-md-6 form-group">
+                  <input type="text" name="nome" class="form-control" id="nome" placeholder="Nome">
+                </div>
+                <div class="col-md-6 form-group mt-3 mt-md-0">
+                  <input type="text" class="form-control" name="telefone" id="telefone" placeholder="(18) 99999-9999" maxlength="15">
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-6 form-group">
+                  <input type="email" class="form-control" name="email" id="email" placeholder="E-mail">
+                </div>
+                <div class="col-md-6 form-group mt-3 mt-md-0">
+                  <input type="text" class="form-control" name="cidade" id="cidade" placeholder="Cidade">
+                </div>
+              </div>
+
+              <div class="form-group mt-3">
+                <select class="form-control" name="estado" id="estado">
+                  <option value="" disabled selected>Selecione um Estado</option>
+                  <option value="SP">SP</option>
+                  <option value="RJ">RJ</option>
+                  <option value="MG">MG</option>
+                  <!-- ...outros estados -->
+                </select>
+              </div>
+
+              <div class="form-group mt-3">
+                <select class="form-control" name="assunto" id="assunto">
+                  <option value="" disabled selected>Selecione um Assunto</option>
+                  <option value="Instalação">Instalação</option>
+                  <option value="Manutenção">Manutenção</option>
+                  <option value="Limpeza">Limpeza</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+
+              <div class="form-group mt-3">
+                <textarea class="form-control" name="mensagem" id="mensagem" placeholder="Mensagem"></textarea>
+              </div>
+
+              <div class="text-center">
+                <button type="submit">Enviar Mensagem</button>
+              </div>
+            </form>
+          </div>
+
+
+
+      </div>
+
+    </div>
+
+  </section><!-- /Contact Section -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  const telInput = document.getElementById('telefone');
+
+  telInput.addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+
+    if (value.length > 11) value = value.slice(0, 11);
+
+    if (value.length > 0) value = '(' + value;
+    if (value.length > 3) value = value.slice(0, 3) + ') ' + value.slice(3);
+    if (value.length > 10) value = value.slice(0, 10) + '-' + value.slice(10);
+
+    e.target.value = value;
+  });
+</script>
+
+
+<script>
+  document.getElementById('contatoForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const nome = document.getElementById('nome').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const cidade = document.getElementById('cidade').value.trim();
+    const estado = document.getElementById('estado').value;
+    const assunto = document.getElementById('assunto').value;
+    const mensagem = document.getElementById('mensagem').value.trim();
+
+    const erros = [];
+
+    if (nome.length < 3) erros.push("Digite um nome com pelo menos 3 letras.");
+    if (!/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/.test(telefone)) erros.push("Telefone inválido. Use o formato (18) 99999-9999.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) erros.push("E-mail inválido.");
+    if (cidade.length < 3) erros.push("Cidade deve ter pelo menos 3 letras.");
+    if (!estado) erros.push("Selecione um estado.");
+    if (!assunto) erros.push("Selecione um assunto.");
+    if (mensagem.length < 10) erros.push("A mensagem deve ter no mínimo 10 caracteres.");
+
+    if (erros.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Verifique os campos:',
+        html: `<ul style="text-align:left;">${erros.map(erro => `<li>${erro}</li>`).join('')}</ul>`,
+      });
+      return;
+    }
+
+    const formData = { nome, telefone, email, cidade, estado, assunto, mensagem };
+
+    try {
+      const response = await fetch('/admin/contatos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Mensagem enviada!',
+          text: 'Entraremos em contato em breve.',
+        });
+        document.getElementById('contatoForm').reset();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro ao enviar',
+          text: 'Tente novamente mais tarde.',
+        });
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro inesperado',
+        text: 'Tente novamente mais tarde.',
+      });
+    }
+  });
+</script>
+

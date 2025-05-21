@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instalações Realizadas</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+  <div class="container-fluid">
+    <h1>Instalações</h1>
+
+    <hr><br>
+
+    <div style="margin-bottom: 15px;" id="divFiltrosinstalacoes">
+        <label for="filtro" class="fw-bold text-dark"> Filtro:</label>
+        <form method="GET" action="/admin/instalacoes" class="d-flex gap-2 align-items-stretch">
+          <input type="hidden" name="campo" id="campoFiltroInstalacaoInput" value="<%= campoFiltro || '' %>">
+          <input type="text" name="valor" class="form-control ms-2" placeholder="Buscar..." value="<%= valorFiltro || '' %>">
+          <div class="dropdown-custom position-relative">
+            
+            <button id="btnEscolherFiltroInstalacao" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 160px;">
+              <span id="filtroInstalacaoSelecionadoTexto">
+                <%= campoFiltro ? ({
+                  cliente: 'Cliente',
+                  status: 'Status',
+                  servico: 'Serviço'
+                }[campoFiltro]) : 'Filtros' %>
+              </span>
+              <i class="fas fa-chevron-down ms-2"></i>
+            </button>
+            <ul id="filtroInstalacaoDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
+              <li class="list-group-item itemFiltroInstalacao" data-campo="cliente">Cliente</li>
+              <li class="list-group-item itemFiltroInstalacao" data-campo="status">Status</li>
+              <li class="list-group-item itemFiltroInstalacao" data-campo="servico">Serviço</li>
+            </ul>
+            
+          </div>
+          
+          
+          <button class="btn btn-secondary d-flex align-items-center" type="submit">
+            <i class="fas fa-search me-1"></i> Buscar
+          </button>
+          <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltrosInstalacoes">
+            <i class="fas fa-times me-1"></i> Limpar
+          </button>
+       </form>
+    </div>
+
+    <!-- Modal de Edição de Instalação -->
+    <div class="modal fade" id="editarInstalacaoModal" tabindex="-1" aria-labelledby="editarInstalacaoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title" id="editarInstalacaoLabel"><i class="fas fa-edit"></i> Atualizar Instalação</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formEditarInstalacao">
+              <input type="hidden" id="editInstalacaoId">
+              <div class="mb-3">
+                <label for="editStatus" class="form-label">Status</label>
+                <select id="editStatus" class="form-select" required>
+                  <option value="">Selecione</option>
+                  <option value="Pendente">Pendente</option>
+                  <option value="Em andamento">Em andamento</option>
+                  <option value="Concluída">Concluída</option>
+                  <option value="Cancelada">Cancelada</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editObservacoes" class="form-label">Observações</label>
+                <textarea id="editObservacoes" class="form-control" rows="4" placeholder="Digite observações se necessário..."></textarea>
+              </div>
+              <div class="text-end">
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <% if (perfilId == 1) { %>
+      <table class="table table-striped align-middle">
+        <thead class="table-striped">
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Endereço</th>
+            <th>Serviço</th>
+            <th>Equipamentos</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaInstalacoes">
+          <% if (lista.length > 0) { %>
+            <% lista.forEach(i => { %>
+              <tr>
+                <td><%= i.instalacao_id %></td>
+                <td><%= i.nome_completo %></td>
+                <td>
+                  <%= i.logradouro %>, <%= i.numero %>
+                  <% if (i.complemento) { %> - <%= i.complemento %><% } %>,
+                  <%= i.cidade %> - <%= i.estado %> (<%= i.cep %>)
+                </td>
+                <td><%= i.servico %></td>
+                <td>
+                  <% if (i.equipamentos.length > 0) { %>
+                    <ul class="mb-0">
+                      <% i.equipamentos.forEach(eq => { %>
+                        <li>
+                          <strong><%= eq.nome %></strong> (<%= eq.marca %>) - 
+                          <%= eq.quantidade %> un - 
+                          R$ <%= Number(eq.valor_unitario).toFixed(2).replace('.', ',') %>
+                        </li>
+                      <% }) %>
+                    </ul>
+                  <% } else { %>
+                    <em>Sem equipamentos</em>
+                  <% } %>
+                </td>
+                <td><%= i.status %></td>
+                <td>
+                  <div class="btn-group" role="group">
+                      <button class="btn btn-warning btnEditarInstalacao" data-id="<%= i.instalacao_id %>">
+                      <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-danger btnExcluirInstalacao" data-id="<%= i.instalacao_id %>">
+                      <i class="fas fa-trash"></i>
+                      </button>
+                      <button class="btn btn-info btnVisualizarInstalacao" data-id="<%= i.instalacao_id %>">
+                      <i class="fas fa-eye"></i>
+                      </button>
+                  </div>
+                </td>
+
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" class="text-center">Nenhuma instalação encontrada.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    <% } else if (perfilId == 2) { %>
+      <% if (lista.length > 0) { %>
+        <% lista.forEach(i => {
+          const coresStatus = {
+            'Pendente': 'warning',
+            'Em andamento': 'info',
+            'Concluída': 'success',
+            'Cancelada': 'danger'
+          };
+
+          const iconesServico = {
+            'Instalação de Painéis': 'fa-solar-panel',
+            'Manutenção': 'fa-wrench',
+            'Orçamento': 'fa-file-invoice-dollar',
+            'Inspeção': 'fa-search'
+          };
+
+          const corStatus = coresStatus[i.status] || 'secondary';
+          const iconeServico = iconesServico[i.servico] || 'fa-cogs';
+        %>
+          <div class="col">
+            <div class="card shadow-sm border border-light">
+              <div class="card-header bg-<%= corStatus %> text-white d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-home me-2"></i>Instalação #<%= i.instalacao_id %></span>
+                <span class="badge bg-light text-dark"><%= i.status %></span>
+              </div>
+              <div class="card-body text-dark">
+                <h5 class="card-title"><i class="fas fa-user me-2"></i><%= i.nome_completo %></h5>
+                <p class="card-text mb-1">
+                  <i class="fas fa-map-marker-alt me-2 text-secondary"></i>
+                  <%= i.logradouro %>, <%= i.numero %>
+                  <% if (i.complemento) { %> - <%= i.complemento %><% } %>,
+                  <%= i.cidade %> - <%= i.estado %> (<%= i.cep %>)
+                </p>
+                <p class="card-text mb-1">
+                  <i class="fas <%= iconeServico %> me-2 text-secondary"></i>
+                  <strong>Serviço:</strong> <%= i.servico %>
+                </p>
+                <p class="card-text mb-1">
+                  <i class="fas fa-toolbox me-2 text-secondary"></i>
+                  <strong>Equipamentos:</strong>
+                  <% if (i.equipamentos.length > 0) { %>
+                    <ul class="mb-1 ps-3">
+                      <% i.equipamentos.forEach(eq => { %>
+                        <li>
+                          <strong><%= eq.nome %></strong> (<%= eq.marca %>) - 
+                          <%= eq.quantidade %> un - 
+                          R$ <%= Number(eq.valor_unitario).toFixed(2).replace('.', ',') %>
+                        </li>
+                      <% }) %>
+                    </ul>
+                  <% } else { %>
+                    <em>Sem equipamentos</em>
+                  <% } %>
+                </p>
+              </div>
+              <div class="card-footer d-flex justify-content-end gap-2">
+                <button class="btn btn-warning btn-sm btnEditarInstalacao" data-id="<%= i.instalacao_id %>">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-info btn-sm btnVisualizarInstalacao" data-id="<%= i.instalacao_id %>">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col">
+          <div class="alert alert-warning text-center">Nenhuma instalação encontrada.</div>
+        </div>
+      <% } %>
+    <% } %>
+
+  <div class="modal fade" id="visualizarInstalacaoModal" tabindex="-1" aria-labelledby="visualizarInstalacaoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content shadow rounded-3">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="visualizarInstalacaoLabel">
+          <i class="fas fa-info-circle me-2"></i>Detalhes da Instalação
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Status e Datas -->
+        <div class="mb-3">
+          <span class="badge bg-secondary me-2"><strong>Status:</strong> <span id="visStatus"></span></span>
+          <span class="badge bg-light text-dark me-2"><strong>Criação:</strong> <span id="visDataCriacao"></span></span>
+          <span class="badge bg-light text-dark"><strong>Conclusão:</strong> <span id="visDataConclusao"></span></span>
+        </div>
+
+        <!-- Cliente -->
+        <div class="mb-4">
+          <h6><i class="fas fa-user me-2 text-muted"></i>Cliente</h6>
+          <p><strong>Nome:</strong> <span id="visNomeCliente"></span></p>
+          <p><strong>Telefone:</strong> <span id="visTelefoneCliente"></span></p>
+          <p><strong>Tipo:</strong> <span id="visTipoCliente"></span></p>
+          <p><strong>Endereço:</strong> <span id="visEndereco"></span></p>
+        </div>
+
+        <!-- Serviço -->
+        <div class="mb-4">
+          <h6><i class="fas fa-wrench me-2 text-muted"></i>Serviço</h6>
+          <p><strong>Tipo de Sistema:</strong> <span id="visTipoSistema"></span></p>
+          <p class="border-start border-4 border-primary ps-3" id="visServico"></p>
+        </div>
+
+        <!-- Equipamentos -->
+        <div class="mb-3">
+          <h6><i class="fas fa-toolbox me-2 text-muted"></i>Equipamentos</h6>
+          <ul id="visEquipamentos" class="list-group"></ul>
+        </div>
+
+        
+        <!-- Observações no final -->
+        <div class="mb-4">
+          <h6><i class="fas fa-sticky-note me-2 text-muted"></i>Observações</h6>
+          <p class="border rounded p-2 bg-light" id="visObservacoes"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/js/admin/editarInstalacao.js"></script>
+  <script src="/js/admin/excluirInstalacao.js"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btnEscolherFiltro = document.getElementById("btnEscolherFiltroInstalacao");
+    const dropdown = document.getElementById("filtroInstalacaoDropdown");
+    const campoInput = document.getElementById("campoFiltroInstalacaoInput");
+    const textoSelecionado = document.getElementById("filtroInstalacaoSelecionadoTexto");
+
+    // Atualiza o texto do botão com base no valor atual do campoFiltro
+    const campoAtual = campoInput.value;
+    if (campoAtual) {
+      const mapaCampos = {
+        cliente: "Cliente",
+        status: "Status",
+        servico: "Serviço"
+      };
+      textoSelecionado.textContent = mapaCampos[campoAtual] || "Filtros";
+    }
+
+    btnEscolherFiltro.addEventListener("click", function () {
+      dropdown.classList.toggle("d-none");
+    });
+
+    document.querySelectorAll(".itemFiltroInstalacao").forEach(item => {
+      item.addEventListener("click", function () {
+        const campo = item.getAttribute("data-campo");
+        const texto = item.textContent;
+
+        campoInput.value = campo;
+        textoSelecionado.textContent = texto;
+        dropdown.classList.add("d-none");
+      });
+    });
+
+    document.getElementById("btnLimparFiltrosInstalacoes").addEventListener("click", () => {
+      window.location.href = "/admin/instalacoes";
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!btnEscolherFiltro.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add("d-none");
+      }
+    });
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.btnVisualizarInstalacao').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-id');
+
+      try {
+        const resposta = await fetch(`/admin/instalacoes/${id}`);
+        const resultado = await resposta.json();
+
+        if (!resultado.ok) {
+          return Swal.fire("Erro", resultado.msg, "error");
+        }
+
+        const i = resultado.instalacao;
+
+        // Dados principais
+        document.getElementById('visStatus').textContent = i.status;
+        const statusElement = document.getElementById('visStatus');
+        statusElement.textContent = i.status;
+
+        switch (i.status) {
+          case 'Concluída':
+            statusElement.style.color = 'blue';
+            break;
+          case 'Pendente':
+            statusElement.style.color = 'orange';
+            break;
+          case 'Cancelada':
+            statusElement.style.color = 'red';
+            break;
+          case 'Em andamento':
+            statusElement.style.color = 'yellow';
+            break;
+          default:
+            statusElement.style.color = 'black';
+        }
+
+        document.getElementById('visDataCriacao').textContent = i.data_criacao;
+        document.getElementById('visDataConclusao').textContent = i.data_conclusao || '—';
+
+        // Cliente
+        document.getElementById('visNomeCliente').textContent = i.nome_completo;
+        document.getElementById('visTelefoneCliente').textContent = i.telefone || '—';
+        document.getElementById('visEndereco').textContent = `${i.logradouro}, ${i.numero} ${i.complemento || ''} - ${i.cidade}/${i.estado}, ${i.cep}`;
+        document.getElementById('visTipoCliente').textContent = i.tipo_cliente || '—';
+
+        // Serviço
+        document.getElementById('visServico').textContent = i.servico;
+        document.getElementById('visTipoSistema').textContent = i.tipo_sistema || '—';
+
+        // Equipamentos
+        const equipamentosContainer = document.getElementById('visEquipamentos');
+        equipamentosContainer.innerHTML = '';
+
+        if (i.equipamentos.length > 0) {
+          i.equipamentos.forEach(eq => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item');
+            li.textContent = `${eq.nome} (${eq.marca}) - ${eq.quantidade}x R$ ${Number(eq.valor_unitario).toFixed(2)}`;
+            equipamentosContainer.appendChild(li);
+          });
+        } else {
+          equipamentosContainer.innerHTML = '<li class="list-group-item">Nenhum equipamento vinculado</li>';
+        }
+
+        // Observações (agora no fim)
+        document.getElementById('visObservacoes').textContent = i.observacoes || 'Sem observações';
+
+        // Abre o modal
+        const modal = new bootstrap.Modal(document.getElementById('visualizarInstalacaoModal'));
+        modal.show();
+
+      } catch (err) {
+        Swal.fire("Erro", "Erro ao buscar detalhes da instalação.", "error");
+      }
+    });
+  });
+</script>
+
+
+</body>
+</html>
+

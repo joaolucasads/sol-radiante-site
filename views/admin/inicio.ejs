@@ -1,0 +1,23 @@
+<% if (usuarioLogado.perfilId == 1) { %>
+<div class="container my-5">
+    <div class="p-5 bg-light border rounded-3 shadow-sm text-center">
+        <h1 class="display-5 fw-bold text-warning">Zona Administrativa</h1>
+        <p class="lead">Bem-vindo à central de controle da <strong>Sol Radiante</strong>.</p>
+        <hr class="my-4">
+        <p>Gerencie projetos, usuários e tenha uma visão geral da operação.</p>
+        <i class="bi bi-gear-fill fs-1 text-warning"></i>
+    </div>
+</div>
+<% } %>
+
+<% if (usuarioLogado.perfilId == 2) { %>
+<div class="container my-5">
+    <div class="p-5 bg-white border-start border-5 border-warning shadow-sm text-center">
+        <h1 class="display-6 fw-bold text-warning">Zona Operacional</h1>
+        <p class="lead">Bem-vindo à sua área de trabalho na <strong>Sol Radiante</strong>.</p>
+        <hr class="my-4">
+        <p>Acompanhe instalações, manutenção e tarefas diárias.</p>
+        <i class="bi bi-lightning-charge-fill fs-1 text-warning"></i>
+    </div>
+</div>
+<% } %>

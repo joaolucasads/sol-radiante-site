@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Equipamentos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <h1>Gerenciamento de Equipamentos</h1>
+        <hr>
+        <button class="btn btn-success" id="btnNovoEquipamento">Novo Equipamento</button>
+      
+        <div style="margin-bottom: 15px;" id="divFiltrosEquipamentos">
+          <label for="filtro" class="fw-bold text-dark" style="margin-top: 20px;">Filtro:</label>
+          <form method="GET" action="/admin/equipamentos" class="d-flex gap-2 align-items-stretch">
+            
+            <input id="filtroEquipamento" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." class="form-control" value="<%= valorFiltro || '' %>">
+            <input type="hidden" name="campo" id="campoFiltroEquipamentoInput" value="<%= campoFiltro || 'nome' %>">
+
+            <div class="dropdown-custom position-relative">
+              <button id="btnEscolherFiltroEquipamento" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 160px;">
+                <span id="filtroEquipamentoSelecionadoTexto">
+                <%= campoFiltro ? ({
+                    id: 'ID',
+                    nome: 'Nome',
+                    marca: 'Marca',
+                    modelo: 'Modelo'
+                }[campoFiltro]) : 'Filtros' %>
+                </span>
+                <i class="fas fa-chevron-down ms-2"></i>
+              </button>
+              <ul id="filtroEquipamentoDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
+                <li class="list-group-item itemFiltroEquipamento" data-campo="nome">Nome</li>
+                <li class="list-group-item itemFiltroEquipamento" data-campo="marca">Marca</li>
+                <li class="list-group-item itemFiltroEquipamento" data-campo="modelo">Modelo</li>
+                <li class="list-group-item itemFiltroEquipamento" data-campo="id">ID</li>
+              </ul>
+            </div>
+
+            <button class="btn btn-secondary d-flex align-items-center" type="submit">
+              <i class="fas fa-search me-1"></i> Buscar
+            </button>
+            <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltrosEquipamentos">
+              <i class="fas fa-times me-1"></i> Limpar
+            </button>
+          </form>
+        </div>
+
+
+        <!-- Modal de Cadastro/Edição de Equipamento -->
+        <div class="modal fade" id="equipamentoModal" tabindex="-1" aria-labelledby="modalEquipamentoLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <form id="formEquipamento"> <!-- FORM AQUI -->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalEquipamentoLabel">Cadastro de Equipamento</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                <input type="hidden" id="id" name="id">
+        
+                <div class="mb-3">
+                  <label for="nome" class="form-label">Nome do Equipamento</label>
+                  <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+        
+                <div class="mb-3">
+                  <label for="marca" class="form-label">Marca</label>
+                  <input type="text" class="form-control" id="marca" name="marca">
+                </div>
+
+                <div class="mb-3">
+                    <label for="modelo" class="form-label">Modelo</label>
+                    <input type="text" class="form-control" id="modelo" name="modelo">
+                </div>
+        
+                <div class="mb-3">
+                  <label for="quantidade" class="form-label">Quantidade em Estoque</label>
+                  <input type="number" class="form-control" id="quantidade" name="quantidade" min="0">
+                </div>
+        
+                <div class="mb-3">
+                  <label for="data" class="form-label">Data de Aquisição</label>
+                  <input type="date" class="form-control" id="data_aquisicao" name="data">
+                </div>
+        
+                <div class="mb-3">
+                  <label for="valor" class="form-label">Valor</label>
+                  <input type="number" class="form-control" id="valor" name="valor" step="0.01" min="0">
+                </div>
+              </div>
+              <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnSalvarEquipamento">Cadastrar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Marca / Modelo</th>
+                    <th>Quantidade</th>
+                    <th>Data de Aquisição</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaEquipamentos">
+                <% equipamentos.forEach(e => { %>
+                    <tr>
+                        <td><%= e.id %></td>
+                        <td><%= e.nome %></td>
+                        <td><%= e.marca %> - <%= e.modelo %></td>
+                        <td><%= e.quantidade_estoque %></td>
+                        <td><%= new Date(e.data_aquisicao).toLocaleDateString() %></td>
+                        <td>R$ <%= Number(e.valor).toFixed(2).replace('.', ',') %></td>
+                        <td>
+                            <button class="btn btn-warning btnEditarEquipamento"
+                                data-id="<%= e.id %>"
+                                data-nome="<%= e.nome %>"
+                                data-marca="<%= e.marca %>"
+                                data-modelo="<%= e.modelo %>"
+                                data-quantidade="<%= e.quantidade_estoque %>"
+                                data-data="<%= new Date(e.data_aquisicao).toISOString().split('T')[0] %>"
+                                data-valor="<%= e.valor %>">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button class="btn btn-danger btnExcluirEquipamento" data-id="<%= e.id %>">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+
+    </div>
+
+    <script src="https://unpkg.com/imask"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/admin/equipamentoModal.js" ></script>
+    <script src="/js/admin/excluirEquipamento.js"></script>
+
+    <script>
+      // Dropdown toggle
+      document.getElementById('btnEscolherFiltroEquipamento').addEventListener('click', function () {
+        document.getElementById('filtroEquipamentoDropdown').classList.toggle('d-none');
+      });
+
+      // Seleção do campo do filtro
+      document.querySelectorAll('.itemFiltroEquipamento').forEach(item => {
+        item.addEventListener('click', function () {
+          const campo = this.getAttribute('data-campo');
+          const texto = this.innerText;
+
+          document.getElementById('campoFiltroEquipamentoInput').value = campo;
+          document.getElementById('filtroEquipamentoSelecionadoTexto').innerText = texto;
+
+          // Fecha o dropdown
+          document.getElementById('filtroEquipamentoDropdown').classList.add('d-none');
+        });
+      });
+
+      // Clique fora do dropdown fecha o menu
+      document.addEventListener('click', function (e) {
+        const dropdown = document.getElementById('filtroEquipamentoDropdown');
+        const botao = document.getElementById('btnEscolherFiltroEquipamento');
+        if (!dropdown.contains(e.target) && !botao.contains(e.target)) {
+          dropdown.classList.add('d-none');
+        }
+      });
+
+      // Botão limpar
+      document.getElementById('btnLimparFiltrosEquipamentos').addEventListener('click', function () {
+        window.location.href = '/admin/equipamentos';
+      });
+
+      </script>
+
+
+</body>
+</html>

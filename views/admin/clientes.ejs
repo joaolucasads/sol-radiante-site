@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Clientes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <h1>Gerenciamento de Clientes</h1>
+    <hr>
+
+    <div class="mb-3 d-flex">
+        <button id="btnNovoCliente" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#clienteModal">
+            Novo Cliente
+        </button>          
+    </div>
+
+    <!-- Filtros -->
+<div style="margin-bottom: 15px;" id="divFiltrosClientes">
+    <label for="filtro" class="fw-bold text-dark">Filtro:</label>
+    <form method="GET" action="/admin/clientes" class="d-flex gap-2 align-items-stretch">
+      <!-- parte atualizada do HTML de filtro -->
+        
+        <input id="filtroCliente" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." class="form-control" value="<%= valorFiltro || '' %>">
+        <input type="hidden" name="campo" id="campoFiltroClienteInput" value="<%= campoFiltro || 'nome' %>">
+
+        <div class="dropdown-custom position-relative">
+        <button id="btnEscolherFiltroCliente" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 160px;">
+            <span id="filtroClienteSelecionadoTexto">
+            <%= campoFiltro ? ({
+                id: 'ID',
+                nome: 'Nome',
+                email: 'Email',
+                cpf: 'CPF/CNPJ',
+                telefone: 'Telefone'
+            }[campoFiltro]) : 'Filtros' %>
+            </span>
+            <i class="fas fa-chevron-down ms-2"></i>
+        </button>
+        <ul id="filtroClienteDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
+            <li class="list-group-item itemFiltroCliente" data-campo="nome">Nome</li>
+            <li class="list-group-item itemFiltroCliente" data-campo="email">Email</li>
+            <li class="list-group-item itemFiltroCliente" data-campo="cpf">CPF/CNPJ</li>
+            <li class="list-group-item itemFiltroCliente" data-campo="telefone">Telefone</li>
+            <li class="list-group-item itemFiltroCliente" data-campo="id">ID</li>
+        </ul>
+        </div>
+
+  
+      <button class="btn btn-secondary d-flex align-items-center" type="submit">
+        <i class="fas fa-search me-1"></i> Buscar
+      </button>
+      <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltrosClientes">
+        <i class="fas fa-times me-1"></i> Limpar
+      </button>
+    </form>
+  </div>
+  
+
+    <div>
+        <table class="table table-striped" id="tableCliente">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>CPF/CNPJ</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+                <% clientes.forEach(cliente => { %>
+                    <tr>
+                        <td><%= cliente.id %></td>
+                        <td><%= cliente.nome_completo %></td>
+                        <td><%= cliente.email %></td>
+                        <td><%= cliente.telefone %></td>
+                        <td><%= cliente.cpf_cnpj %></td>
+                        <td>
+                            <button class="btn btn-warning btn-sm btnEditarCliente" data-cliente='<%- JSON.stringify(cliente) %>'>
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-excluir-cliente" data-id="<%= cliente.id %>">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            <button class="btn btn-info btn-sm btnVisualizarCliente" data-cliente='<%- JSON.stringify(cliente) %>'>
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>            
+        </table>
+    </div>
+</div>
+
+<!-- Modal de Cadastro/Edição de Cliente -->
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="formCliente">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalClienteLabel">Cadastro de Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="id" name="id">
+
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome:</label>
+                        <input type="text" class="form-control" id="nome" name="nome_completo" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="telefone" class="form-label">Telefone:</label>
+                        <input type="tel" class="form-control" id="telefone" name="telefone" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cpf_cnpj" class="form-label">CPF/CNPJ:</label>
+                        <input type="text" class="form-control" id="cpf_cnpj" name="cpf_cnpj" required>
+                    </div>
+
+                    <hr>
+                    <h5>Endereço</h5>
+
+                    <div class="mb-3">
+                        <label for="logradouro" class="form-label">Rua:</label>
+                        <input type="text" class="form-control" id="logradouro" name="logradouro" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="numero" class="form-label">Número:</label>
+                            <input type="text" class="form-control" id="numero" name="numero" required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="complemento" class="form-label">Complemento:</label>
+                            <input type="text" class="form-control" id="complemento" name="complemento">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cidade" class="form-label">Cidade:</label>
+                            <input type="text" class="form-control" id="cidade" name="cidade" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="estado" class="form-label">Estado:</label>
+                            <input type="text" class="form-control" id="estado" name="estado" required>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="cep" class="form-label">CEP:</label>
+                            <input type="text" class="form-control" id="cep" name="cep" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnSalvarCliente" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Visualização de Cliente -->
+<div class="modal fade" id="visualizarClienteModal" tabindex="-1" aria-labelledby="visualizarClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title" id="visualizarClienteLabel"><i class="fas fa-user"></i> Detalhes do Cliente</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-secondary"><i class="fas fa-id-card me-2"></i>Dados Pessoais</h6>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Nome:</strong> <span id="visNome"></span></li>
+                <li class="list-group-item"><strong>Email:</strong> <span id="visEmail"></span></li>
+                <li class="list-group-item"><strong>Telefone:</strong> <span id="visTelefone"></span></li>
+                <li class="list-group-item"><strong>CPF/CNPJ:</strong> <span id="visCpfCnpj"></span></li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-secondary"><i class="fas fa-map-marker-alt me-2"></i>Endereço</h6>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Rua:</strong> <span id="visLogradouro"></span></li>
+                <li class="list-group-item"><strong>Número:</strong> <span id="visNumero"></span></li>
+                <li class="list-group-item"><strong>Complemento:</strong> <span id="visComplemento"></span></li>
+                <li class="list-group-item"><strong>Cidade:</strong> <span id="visCidade"></span></li>
+                <li class="list-group-item"><strong>Estado:</strong> <span id="visEstado"></span></li>
+                <li class="list-group-item"><strong>CEP:</strong> <span id="visCep"></span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <script src="https://unpkg.com/imask"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/admin/addCliente.js"></script>
+<script src="/js/admin/editarCliente.js"></script>
+<script src="/js/admin/excluirCliente.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const btnEscolherFiltro = document.getElementById("btnEscolherFiltroCliente");
+      const dropdown = document.getElementById("filtroClienteDropdown");
+      const campoInput = document.getElementById("campoFiltroClienteInput");
+      const textoSelecionado = document.getElementById("filtroClienteSelecionadoTexto");
+  
+      btnEscolherFiltro.addEventListener("click", function () {
+        dropdown.classList.toggle("d-none");
+      });
+  
+      document.querySelectorAll(".itemFiltroCliente").forEach(item => {
+        item.addEventListener("click", function () {
+          const campo = item.getAttribute("data-campo");
+          const texto = item.textContent;
+  
+          campoInput.value = campo;
+          textoSelecionado.textContent = texto;
+          dropdown.classList.add("d-none");
+        });
+      });
+  
+      document.getElementById("btnLimparFiltrosClientes").addEventListener("click", () => {
+            window.location.href = "/admin/clientes";
+        });
+
+  
+      // Fecha dropdown se clicar fora
+      document.addEventListener("click", function (e) {
+        if (!btnEscolherFiltro.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.add("d-none");
+        }
+      });
+    });
+  </script>
+  <script>
+    document.querySelectorAll('.btnVisualizarCliente').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const cliente = JSON.parse(this.getAttribute('data-cliente'));
+  
+        document.getElementById('visNome').textContent = cliente.nome_completo;
+        document.getElementById('visEmail').textContent = cliente.email;
+        document.getElementById('visTelefone').textContent = cliente.telefone;
+        document.getElementById('visCpfCnpj').textContent = cliente.cpf_cnpj;
+        document.getElementById('visLogradouro').textContent = cliente.logradouro;
+        document.getElementById('visNumero').textContent = cliente.numero;
+        document.getElementById('visComplemento').textContent = cliente.complemento || '-';
+        document.getElementById('visCidade').textContent = cliente.cidade;
+        document.getElementById('visEstado').textContent = cliente.estado;
+        document.getElementById('visCep').textContent = cliente.cep;
+  
+        const modal = new bootstrap.Modal(document.getElementById('visualizarClienteModal'));
+        modal.show();
+      });
+    });
+  </script>
+  
+  
+
+</body>
+</html>
