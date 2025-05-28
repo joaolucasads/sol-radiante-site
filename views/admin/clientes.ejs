@@ -14,52 +14,65 @@
     <hr>
 
     <div class="mb-3 d-flex">
-        <button id="btnNovoCliente" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#clienteModal">
+        <button id="btnNovoCliente" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
             Novo Cliente
-        </button>          
+        </button>    
+        <button class="btn btn-success" style="margin-left: 20px;" onclick="exportarParaExcel('tableCliente', 'Clientes')">
+          <i class="fas fa-file-excel me-1"></i> Exportar Excel
+        </button>      
     </div>
 
     <!-- Filtros -->
-<div style="margin-bottom: 15px;" id="divFiltrosClientes">
-    <label for="filtro" class="fw-bold text-dark">Filtro:</label>
-    <form method="GET" action="/admin/clientes" class="d-flex gap-2 align-items-stretch">
-      <!-- parte atualizada do HTML de filtro -->
+    <div style="margin-bottom: 15px;" id="divFiltrosClientes">
+      <label for="filtro" class="fw-bold text-dark" style="margin-top: 20px;">Filtro:</label>
+      <form method="GET" action="/admin/clientes" class="d-flex flex-wrap flex-md-nowrap gap-2 align-items-stretch">
         
-        <input id="filtroCliente" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." class="form-control" value="<%= valorFiltro || '' %>">
+        <input id="filtroCliente"
+              name="valor"
+              type="text"
+              placeholder="Digite um valor a ser filtrado..."
+              class="form-control"
+              value="<%= valorFiltro || '' %>"
+              style="min-width: 200px; flex: 1 1 auto;">
+        
         <input type="hidden" name="campo" id="campoFiltroClienteInput" value="<%= campoFiltro || 'nome' %>">
 
-        <div class="dropdown-custom position-relative">
-        <button id="btnEscolherFiltroCliente" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 160px;">
+        <div class="dropdown-custom position-relative" style="min-width: 160px; flex: 1 1 auto;">
+          <button id="btnEscolherFiltroCliente"
+                  class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100"
+                  type="button">
             <span id="filtroClienteSelecionadoTexto">
-            <%= campoFiltro ? ({
+              <%= campoFiltro ? ({
                 id: 'ID',
                 nome: 'Nome',
                 email: 'Email',
                 cpf: 'CPF/CNPJ',
                 telefone: 'Telefone'
-            }[campoFiltro]) : 'Filtros' %>
+              }[campoFiltro]) : 'Filtros' %>
             </span>
             <i class="fas fa-chevron-down ms-2"></i>
-        </button>
-        <ul id="filtroClienteDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
+          </button>
+          <ul id="filtroClienteDropdown"
+              class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none"
+              style="z-index: 1000; min-width: 160px;">
             <li class="list-group-item itemFiltroCliente" data-campo="nome">Nome</li>
             <li class="list-group-item itemFiltroCliente" data-campo="email">Email</li>
             <li class="list-group-item itemFiltroCliente" data-campo="cpf">CPF/CNPJ</li>
             <li class="list-group-item itemFiltroCliente" data-campo="telefone">Telefone</li>
             <li class="list-group-item itemFiltroCliente" data-campo="id">ID</li>
-        </ul>
+          </ul>
         </div>
 
-  
-      <button class="btn btn-secondary d-flex align-items-center" type="submit">
-        <i class="fas fa-search me-1"></i> Buscar
-      </button>
-      <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltrosClientes">
-        <i class="fas fa-times me-1"></i> Limpar
-      </button>
-    </form>
-  </div>
-  
+        <button class="btn btn-secondary d-flex align-items-center" type="submit">
+          <i class="fas fa-search me-1"></i> Buscar
+        </button>
+
+        <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltrosClientes">
+          <i class="fas fa-times me-1"></i> Limpar
+        </button>
+
+      </form>
+    </div>
 
     <div>
         <table class="table table-striped" id="tableCliente">
@@ -273,7 +286,14 @@
       });
     });
   </script>
-  
+  <script>
+    function exportarParaExcel(idTabela, nomeArquivo) {
+      const tabela = document.getElementById(idTabela);
+      const wb = XLSX.utils.table_to_book(tabela, { sheet: "Dados" });
+      XLSX.writeFile(wb, `${nomeArquivo}.xlsx`);
+    }
+  </script>
+
   
 
 </body>

@@ -11,52 +11,57 @@
   <div class="container-fluid">
     <h1>Orçamentos de Energia Solar</h1>
     <hr>
-    <button class="btn btn-success" id="btnNovoOrcamento" data-bs-toggle="modal" data-bs-target="#orcamentoModal">Novo Orçamento</button>
-    
+    <button class="btn btn-primary" id="btnNovoOrcamento" data-bs-toggle="modal" data-bs-target="#orcamentoModal">Novo Orçamento</button>
+    <button class="btn btn-success" style="margin-left: 20px;" onclick="exportarParaExcel('tableOrcamento', 'Orcamentos')">
+          <i class="fas fa-file-excel me-1"></i> Exportar Excel
+    </button> 
 
-   <div style="margin-bottom: 15px;margin-top: 15px;" id="divFiltrosOrcamentos">
+   <div style="margin-bottom: 15px; margin-top: 15px;" id="divFiltrosOrcamentos">
       <label for="filtro" class="fw-bold text-dark">Filtro:</label>
-      <form method="GET" action="/admin/orcamentos" class="d-flex gap-2 align-items-stretch">
       
-      <!-- Campo de texto -->
-       
-      <input id="filtro" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." class="form-control" value="<%= valorFiltro || '' %>">
-
-      <!-- Campo oculto com tipo de filtro -->
-      <input type="hidden" name="campo" id="campoFiltroInput" value="<%= campoFiltro || 'cliente' %>">
-
-      <!-- Dropdown customizado -->
-      <div class="dropdown-custom position-relative">
-        <button id="btnEscolherFiltro" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 160px;">
-          <span id="filtroSelecionadoTexto">
-            <%= campoFiltro ? ({
-              cliente: 'Cliente',
-              status: 'Status',
-              servico: 'Serviço',
-              tipo_cliente: 'Tipo Cliente'
-            }[campoFiltro]) : 'Filtros' %>
-          </span>
-          <i class="fas fa-chevron-down ms-2"></i>
+      <form method="GET" action="/admin/orcamentos" class="d-flex flex-wrap flex-md-nowrap gap-2">
+        
+        <!-- Campo de texto -->
+        <input id="filtro" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." 
+              class="form-control" value="<%= valorFiltro || '' %>" style="min-width: 200px; flex: 1 1 auto;">
+        
+        <!-- Campo oculto com tipo de filtro -->
+        <input type="hidden" name="campo" id="campoFiltroInput" value="<%= campoFiltro || 'cliente' %>">
+        
+        <!-- Dropdown customizado -->
+        <div class="dropdown-custom position-relative" style="min-width: 160px; flex: 1 1 auto;">
+          <button id="btnEscolherFiltro" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button">
+            <span id="filtroSelecionadoTexto">
+              <%= campoFiltro ? ({
+                cliente: 'Cliente',
+                status: 'Status',
+                servico: 'Serviço',
+                tipo_cliente: 'Tipo Cliente'
+              }[campoFiltro]) : 'Filtros' %>
+            </span>
+            <i class="fas fa-chevron-down ms-2"></i>
+          </button>
+          <ul id="filtroDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
+            <li class="list-group-item itemFiltro" data-campo="cliente">Cliente</li>
+            <li class="list-group-item itemFiltro" data-campo="status">Status</li>
+            <li class="list-group-item itemFiltro" data-campo="servico">Serviço</li>
+            <li class="list-group-item itemFiltro" data-campo="tipo_cliente">Tipo Cliente</li>
+          </ul>
+        </div>
+        
+        <!-- Botão buscar -->
+        <button class="btn btn-secondary d-flex align-items-center" type="submit" id="btnFiltrar">
+          <i class="fas fa-search me-1"></i> Buscar
         </button>
-        <ul id="filtroDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
-          <li class="list-group-item itemFiltro" data-campo="cliente">Cliente</li>
-          <li class="list-group-item itemFiltro" data-campo="status">Status</li>
-          <li class="list-group-item itemFiltro" data-campo="servico">Serviço</li>
-          <li class="list-group-item itemFiltro" data-campo="tipo_cliente">Tipo Cliente</li>
-        </ul>
-      </div>
+        
+        <!-- Botão limpar -->
+        <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltros">
+          <i class="fas fa-times me-1"></i> Limpar
+        </button>
+        
+      </form>
+    </div>
 
-      <!-- Botão buscar -->
-      <button class="btn btn-secondary d-flex align-items-center" type="submit" id="btnFiltrar">
-        <i class="fas fa-search me-1"></i> Buscar
-      </button>
-
-      <!-- Botão limpar -->
-      <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltros">
-        <i class="fas fa-times me-1"></i> Limpar
-      </button>
-    </form>
-  </div>
 
 
 
@@ -212,6 +217,7 @@
               <div class="mb-4">
                 <label for="servico_id" class="form-label">Serviços Inclusos</label>
                 <select class="form-select" id="servico_id" name="servico_id">
+                  <option value="" data-valor="">Selecione...</option>
                   <% custos.forEach(s => { %>
                     <option value="<%= s.id %>" data-valor="<%= s.valor %>">
                       <%= s.descricao %> - R$ <%= s.valor %>
@@ -274,7 +280,7 @@
 
 
     <!-- Tabela de Orçamentos -->
-    <table class="table table-striped">
+    <table class="table table-striped" id="tableOrcamento">
       <thead>
         <tr>
           <th>ID</th>
@@ -504,10 +510,24 @@
           const servicoSelecionado = servicoSelect?.selectedOptions[0];
           const valorServico = parseFloat(servicoSelecionado?.dataset.valor) || 0;
 
-          const totalGeral = totalEquipamentos + valorServico;
+          // Captura o valor do desconto
+          const descontoInput = document.getElementById('desconto');
+          const descontoPercentual = parseFloat(descontoInput?.value) || 0;
+
+          // Calcula o total geral antes do desconto
+          let totalGeral = totalEquipamentos + valorServico;
+
+          // Aplica o desconto
+          const valorDesconto = totalGeral * (descontoPercentual / 100);
+          totalGeral -= valorDesconto;
 
           document.getElementById('valor_total').value = totalGeral.toFixed(2);
       }
+
+      // Garante que o desconto atualiza o total
+      document.getElementById('desconto').addEventListener('input', atualizarValorTotal);
+
+
 
 
         const equipamentos = <%- JSON.stringify(equipamentos) %>;
@@ -730,6 +750,13 @@ function exportarModalParaPDF() {
         janela.close();
     }, 500);
 }
+</script>
+<script>
+  function exportarParaExcel(idTabela, nomeArquivo) {
+    const tabela = document.getElementById(idTabela);
+    const wb = XLSX.utils.table_to_book(tabela, { sheet: "Dados" });
+    XLSX.writeFile(wb, `${nomeArquivo}.xlsx`);
+  }
 </script>
 
 

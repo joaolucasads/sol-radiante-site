@@ -27,47 +27,67 @@
   <div class="container-fluid">
     <h1>Gerenciamento de Contatos</h1>
     <hr>
-
-    <!-- Filtros -->
-    <div style="margin-bottom: 15px;" id="divFiltros">
-      <label for="filtro" class="fw-bold text-dark">Filtro:</label>
-      <form method="GET" action="/admin/contatos" class="d-flex gap-2 align-items-stretch">
-        <input id="filtro" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." class="form-control" value="<%= valorFiltro || '' %>">
-        <input type="hidden" name="campo" id="campoFiltroInput" value="<%= campoFiltro || 'nome' %>">
-    
-        <div class="dropdown-custom position-relative">
-          <button id="btnEscolherFiltro" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 140px;">
-            <span id="filtroSelecionadoTexto">
-              <%= campoFiltro ? ({
-                nome: 'Nome',
-                email: 'Email',
-                estado: 'Estado',
-                cidade: 'Cidade',
-                assunto: 'Assunto'
-              }[campoFiltro]) : 'Filtros' %>
-            </span>
-            <i class="fas fa-chevron-down ms-2"></i>
-          </button>          
-          <ul id="filtroDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 140px;">
-            <li class="list-group-item itemFiltro" data-campo="nome">Nome</li>
-            <li class="list-group-item itemFiltro" data-campo="email">Email</li>
-            <li class="list-group-item itemFiltro" data-campo="estado">Estado</li>
-            <li class="list-group-item itemFiltro" data-campo="cidade">Cidade</li>
-            <li class="list-group-item itemFiltro" data-campo="assunto">Assunto</li>
-          </ul>
-        </div>
-    
-        <button class="btn btn-secondary d-flex align-items-center" type="submit" id="btnFiltrar">
-          <i class="fas fa-search me-1"></i> Buscar
-        </button>
-        <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltros">
-          <i class="fas fa-times me-1"></i> Limpar
-        </button>
-      </form>
+    <div class="mb-3 d-flex">  
+        <button class="btn btn-success" onclick="exportarParaExcel('tableContato', 'Contatos')">
+          <i class="fas fa-file-excel me-1"></i> Exportar Excel
+        </button>      
     </div>
+      <!-- Filtros -->
+      <div style="margin-bottom: 15px;" id="divFiltros">
+        <label for="filtro" class="fw-bold text-dark" style="margin-top: 20px;">Filtro:</label>
+        <form method="GET" action="/admin/contatos" class="d-flex flex-wrap flex-md-nowrap gap-2 align-items-stretch">
+          
+          <input id="filtro"
+                name="valor"
+                type="text"
+                placeholder="Digite um valor a ser filtrado..."
+                class="form-control"
+                value="<%= valorFiltro || '' %>"
+                style="min-width: 200px; flex: 1 1 auto;">
+          
+          <input type="hidden" name="campo" id="campoFiltroInput" value="<%= campoFiltro || 'nome' %>">
+          
+          <div class="dropdown-custom position-relative" style="min-width: 160px; flex: 1 1 auto;">
+            <button id="btnEscolherFiltro"
+                    class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100"
+                    type="button">
+              <span id="filtroSelecionadoTexto">
+                <%= campoFiltro ? ({
+                  nome: 'Nome',
+                  email: 'Email',
+                  estado: 'Estado',
+                  cidade: 'Cidade',
+                  assunto: 'Assunto'
+                }[campoFiltro]) : 'Filtros' %>
+              </span>
+              <i class="fas fa-chevron-down ms-2"></i>
+            </button>
+            
+            <ul id="filtroDropdown"
+                class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none"
+                style="z-index: 1000; min-width: 160px;">
+              <li class="list-group-item itemFiltro" data-campo="nome">Nome</li>
+              <li class="list-group-item itemFiltro" data-campo="email">Email</li>
+              <li class="list-group-item itemFiltro" data-campo="estado">Estado</li>
+              <li class="list-group-item itemFiltro" data-campo="cidade">Cidade</li>
+              <li class="list-group-item itemFiltro" data-campo="assunto">Assunto</li>
+            </ul>
+          </div>
+
+          <button class="btn btn-secondary d-flex align-items-center" type="submit" id="btnFiltrar">
+            <i class="fas fa-search me-1"></i> Buscar
+          </button>
+
+          <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltros">
+            <i class="fas fa-times me-1"></i> Limpar
+          </button>
+
+        </form>
+      </div>
+
 
     <!-- Tabela de Contatos -->
-    <table class="table table-striped">
+    <table class="table table-striped" id="tableContato">
       <thead>
         <tr>
           <th>Nome</th>
@@ -271,5 +291,12 @@
         });
     </script>
 
+    <script>
+      function exportarParaExcel(idTabela, nomeArquivo) {
+        const tabela = document.getElementById(idTabela);
+        const wb = XLSX.utils.table_to_book(tabela, { sheet: "Dados" });
+        XLSX.writeFile(wb, `${nomeArquivo}.xlsx`);
+      }
+    </script>
 </body>
 </html>

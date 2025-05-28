@@ -7,7 +7,6 @@ router.get("/", ctrl.homeView);
 router.get("/contato", ctrl.contatoView);
 router.get("/sobre", ctrl.sobreView);
 router.get("/servicos", ctrl.servicosView);
-router.get("/blog", ctrl.blogView);
 router.get("/portfolio", ctrl.portfolioView);
 
 module.exports = router;

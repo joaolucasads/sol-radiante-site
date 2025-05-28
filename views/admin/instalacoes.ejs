@@ -12,43 +12,56 @@
 <body>
   <div class="container-fluid">
     <h1>Instalações</h1>
-
-    <hr><br>
-
+    <hr>
+    <button class="btn btn-success" onclick="exportarParaExcel('tableInstalacoes', 'Instalacoes')">
+          <i class="fas fa-file-excel me-1"></i> Exportar Excel
+    </button> 
+    <br><br>
     <div style="margin-bottom: 15px;" id="divFiltrosinstalacoes">
-        <label for="filtro" class="fw-bold text-dark"> Filtro:</label>
-        <form method="GET" action="/admin/instalacoes" class="d-flex gap-2 align-items-stretch">
-          <input type="hidden" name="campo" id="campoFiltroInstalacaoInput" value="<%= campoFiltro || '' %>">
-          <input type="text" name="valor" class="form-control ms-2" placeholder="Buscar..." value="<%= valorFiltro || '' %>">
-          <div class="dropdown-custom position-relative">
-            
-            <button id="btnEscolherFiltroInstalacao" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 160px;">
-              <span id="filtroInstalacaoSelecionadoTexto">
-                <%= campoFiltro ? ({
-                  cliente: 'Cliente',
-                  status: 'Status',
-                  servico: 'Serviço'
-                }[campoFiltro]) : 'Filtros' %>
-              </span>
-              <i class="fas fa-chevron-down ms-2"></i>
-            </button>
-            <ul id="filtroInstalacaoDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 160px;">
-              <li class="list-group-item itemFiltroInstalacao" data-campo="cliente">Cliente</li>
-              <li class="list-group-item itemFiltroInstalacao" data-campo="status">Status</li>
-              <li class="list-group-item itemFiltroInstalacao" data-campo="servico">Serviço</li>
-            </ul>
-            
-          </div>
-          
-          
-          <button class="btn btn-secondary d-flex align-items-center" type="submit">
-            <i class="fas fa-search me-1"></i> Buscar
+      <label for="filtro" class="fw-bold text-dark">Filtro:</label>
+      
+      <form method="GET" action="/admin/instalacoes" class="d-flex flex-wrap flex-md-nowrap gap-2 align-items-stretch">
+        
+        <input type="hidden" name="campo" id="campoFiltroInstalacaoInput" value="<%= campoFiltro || '' %>">
+        
+        <input type="text" name="valor" class="form-control ms-2" placeholder="Buscar..." 
+              value="<%= valorFiltro || '' %>" 
+              style="min-width: 200px; flex: 1 1 auto;">
+        
+        <div class="dropdown-custom position-relative" style="min-width: 160px; flex: 1 1 auto;">
+          <button id="btnEscolherFiltroInstalacao" 
+                  class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" 
+                  type="button">
+            <span id="filtroInstalacaoSelecionadoTexto">
+              <%= campoFiltro ? ({
+                cliente: 'Cliente',
+                status: 'Status',
+                servico: 'Serviço'
+              }[campoFiltro]) : 'Filtros' %>
+            </span>
+            <i class="fas fa-chevron-down ms-2"></i>
           </button>
-          <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltrosInstalacoes">
-            <i class="fas fa-times me-1"></i> Limpar
-          </button>
-       </form>
+          
+          <ul id="filtroInstalacaoDropdown" 
+              class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" 
+              style="z-index: 1000; min-width: 160px;">
+            <li class="list-group-item itemFiltroInstalacao" data-campo="cliente">Cliente</li>
+            <li class="list-group-item itemFiltroInstalacao" data-campo="status">Status</li>
+            <li class="list-group-item itemFiltroInstalacao" data-campo="servico">Serviço</li>
+          </ul>
+        </div>
+        
+        <button class="btn btn-secondary d-flex align-items-center" type="submit">
+          <i class="fas fa-search me-1"></i> Buscar
+        </button>
+        
+        <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltrosInstalacoes">
+          <i class="fas fa-times me-1"></i> Limpar
+        </button>
+        
+      </form>
     </div>
+
 
     <!-- Modal de Edição de Instalação -->
     <div class="modal fade" id="editarInstalacaoModal" tabindex="-1" aria-labelledby="editarInstalacaoLabel" aria-hidden="true">
@@ -85,7 +98,7 @@
     </div>
 
       <% if (perfilId == 1) { %>
-      <table class="table table-striped align-middle">
+      <table class="table table-striped align-middle" id="tableInstalacoes">
         <thead class="table-striped">
           <tr>
             <th>ID</th>
@@ -407,7 +420,13 @@
     });
   });
 </script>
-
+      <script>
+        function exportarParaExcel(idTabela, nomeArquivo) {
+          const tabela = document.getElementById(idTabela);
+          const wb = XLSX.utils.table_to_book(tabela, { sheet: "Dados" });
+          XLSX.writeFile(wb, `${nomeArquivo}.xlsx`);
+        }
+      </script>
 
 </body>
 </html>

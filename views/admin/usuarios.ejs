@@ -29,7 +29,7 @@
     <h1>Gerenciamento de Usuários</h1>
     <hr>
     <div style="margin-bottom: 15px; display: flex;">
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#userModal" id="btnNovoUsuario">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal" id="btnNovoUsuario">
         Novo Usuário
       </button>
     </div>
@@ -88,40 +88,53 @@
     </div>
 
     <!-- Filtros -->
-    <div style="margin-bottom: 15px;" id="divFiltros">
-      <label for="filtro" class="fw-bold text-dark">Filtro:</label>
-      <form method="GET" action="/admin/usuarios" class="d-flex gap-2 align-items-stretch">
-        <input id="filtro" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." class="form-control" value="<%= valorFiltro || '' %>">
-        <input type="hidden" name="campo" id="campoFiltroInput" value="<%= campoFiltro || 'nome' %>">
+<div style="margin-bottom: 15px;" id="divFiltros">
+  <label for="filtro" class="fw-bold text-dark">Filtro:</label>
+  
+  <form method="GET" action="/admin/usuarios" class="d-flex flex-wrap flex-md-nowrap gap-2 align-items-stretch">
     
-        <div class="dropdown-custom position-relative">
-          <button id="btnEscolherFiltro" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button" style="min-width: 140px;">
-            <span id="filtroSelecionadoTexto">
-              <%= campoFiltro ? ({
-                id: 'ID',
-                nome: 'Nome',
-                email: 'Email',
-                perfil: 'Perfil'
-              }[campoFiltro]) : 'Filtros' %>
-            </span>
-            <i class="fas fa-chevron-down ms-2"></i>
-          </button>          
-          <ul id="filtroDropdown" class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" style="z-index: 1000; min-width: 140px;">
-            <li class="list-group-item itemFiltro" data-campo="nome">Nome</li>
-            <li class="list-group-item itemFiltro" data-campo="email">Email</li>
-            <li class="list-group-item itemFiltro" data-campo="perfil">Perfil</li>
-            <li class="list-group-item itemFiltro" data-campo="id">ID</li>
-          </ul>
-        </div>
+    <input id="filtro" name="valor" type="text" placeholder="Digite um valor a ser filtrado..." 
+           class="form-control" value="<%= valorFiltro || '' %>" 
+           style="min-width: 200px; flex: 1 1 auto;">
     
-        <button class="btn btn-secondary d-flex align-items-center" type="submit" id="btnFiltrar">
-          <i class="fas fa-search me-1"></i> Buscar
-        </button>
-        <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltros">
-          <i class="fas fa-times me-1"></i> Limpar
-        </button>
-      </form>
+    <input type="hidden" name="campo" id="campoFiltroInput" value="<%= campoFiltro || 'nome' %>">
+    
+    <div class="dropdown-custom position-relative" style="min-width: 140px; flex: 1 1 auto;">
+      <button id="btnEscolherFiltro" 
+              class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" 
+              type="button">
+        <span id="filtroSelecionadoTexto">
+          <%= campoFiltro ? ({
+            id: 'ID',
+            nome: 'Nome',
+            email: 'Email',
+            perfil: 'Perfil'
+          }[campoFiltro]) : 'Filtros' %>
+        </span>
+        <i class="fas fa-chevron-down ms-2"></i>
+      </button>
+      
+      <ul id="filtroDropdown" 
+          class="list-group bg-white border rounded mt-1 shadow-sm position-absolute d-none" 
+          style="z-index: 1000; min-width: 140px;">
+        <li class="list-group-item itemFiltro" data-campo="nome">Nome</li>
+        <li class="list-group-item itemFiltro" data-campo="email">Email</li>
+        <li class="list-group-item itemFiltro" data-campo="perfil">Perfil</li>
+        <li class="list-group-item itemFiltro" data-campo="id">ID</li>
+      </ul>
     </div>
+    
+    <button class="btn btn-secondary d-flex align-items-center" type="submit" id="btnFiltrar">
+      <i class="fas fa-search me-1"></i> Buscar
+    </button>
+    
+    <button class="btn btn-outline-danger d-flex align-items-center" type="button" id="btnLimparFiltros">
+      <i class="fas fa-times me-1"></i> Limpar
+    </button>
+    
+  </form>
+</div>
+
     
 
 
