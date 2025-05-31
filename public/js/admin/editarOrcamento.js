@@ -39,7 +39,7 @@ document.querySelectorAll('.btnEditarOrcamento').forEach(botao => {
       equipamentos.forEach((eq, index) => {
         const equipamentoHtml = `
           <div class="row mb-2 equipamento-item">
-            <input type="hidden" name="equipamentos[${index}].id" value="${eq.id}">
+            <input type="hidden" name="equipamentos[${index}].equipamentoId" value="${eq.id}">
             <div class="col-md-3">Equipamento
               <input type="text" class="form-control" name="equipamentos[${index}].nome" value="${eq.nome}" disabled>
             </div>
@@ -86,6 +86,7 @@ document.querySelectorAll('.btnEditarOrcamento').forEach(botao => {
 
       // Financeiro
       document.getElementById('valor_total').value = orc.valor_total;
+      document.getElementById('valor_total_desconto').value = orc.valor_total_desconto;
       document.getElementById('desconto').value = orc.desconto;
       document.getElementById('condicoes_pagamento').value = orc.condicoes_pagamento;
       document.getElementById('economia_estimada').value = orc.economia_estimativa;
@@ -112,61 +113,6 @@ document.getElementById('formOrcamento').addEventListener('submit', async (e) =>
 
   const form = e.target;
   const dados = Object.fromEntries(new FormData(form).entries());
-
-  // Validações
-  if (!dados.cliente_id || !dados.media_consumo || !dados.valor_total) {
-    Swal.fire('Erro!', 'Todos os campos obrigatórios devem ser preenchidos.', 'error');
-    return;
-  }
-
-  if (isNaN(dados.media_consumo) || isNaN(dados.valor_total)) {
-    Swal.fire('Erro!', '"Média de Consumo" e "Valor Total" devem ser numéricos.', 'error');
-    return;
-  }
-
-  if (Number(dados.media_consumo) <= 0 || Number(dados.valor_total) < 0 || Number(dados.capacidade_kwp) < 0 || Number(dados.desconto) < 0) {
-    Swal.fire('Erro!', 'Valores não podem ser negativos e "Média de Consumo" deve ser maior que zero.', 'error');
-    return;
-  }
-
-  const apenasLetras = /^[A-Za-zÀ-ÿ\s]+$/;
-
-  if (!apenasLetras.test(dados.concessionaria) || !apenasLetras.test(dados.condicoes_pagamento)) {
-    Swal.fire('Erro!', 'Campos "Concessionária" e "Condições de Pagamento" devem conter apenas letras.', 'error');
-    return;
-  }
-
-  if (isNaN(dados.economia_estimada) || Number(dados.economia_estimada) < 0) {
-    Swal.fire("Erro", "A Economia Estimada deve ser um número maior ou igual a 0.", "error");
-    return;
-  }
-
-  let quantidadeValida = true;
-  document.querySelectorAll('input[name^="equipamentos"][name$="[quantidade]"]').forEach(input => {
-    const valor = Number(input.value);
-    if (isNaN(valor) || valor <= 0) quantidadeValida = false;
-  });
-
-  if (!quantidadeValida) {
-    Swal.fire('Erro!', 'Todos os equipamentos devem ter quantidade válida e maior que zero.', 'error');
-    return;
-  }
-
-  dados.equipamentos = [];
-  const container = document.getElementById('equipamentosContainer');
-  const rows = container.querySelectorAll('.equipamento-item');
-  for (let row of rows) {
-    const equipamentoId = row.querySelector('input[name$=".id"]')?.value;
-    const quantidade = row.querySelector('input[name$=".quantidade"]')?.value;
-    const valorUnitario = row.querySelector('input[name$=".valorUnitario"]')?.value;
-
-    if (!equipamentoId || quantidade <= 0 || valorUnitario < 0) {
-      Swal.fire('Erro!', 'Verifique os dados dos equipamentos.', 'error');
-      return;
-    }
-
-    dados.equipamentos.push({ equipamentoId, quantidade, valorUnitario });
-  }
 
   const statusNovo = document.getElementById('status').value;
   const statusOriginal = document.getElementById('status').dataset.originalStatus;
@@ -213,9 +159,6 @@ document.getElementById('formOrcamento').addEventListener('submit', async (e) =>
         return;
       }
     }
-
-    Swal.fire('Sucesso!', 'Orçamento atualizado com sucesso.', 'success')
-      .then(() => window.location.reload());
 
   } catch (err) {
     Swal.fire('Erro!', err.message, 'error');

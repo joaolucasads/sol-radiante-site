@@ -43,6 +43,7 @@ class OrcamentoController {
                 status,
                 desconto = 0,
                 valor_total,
+                valor_total_desconto,
                 servico_id,
                 media_consumo,
                 concessionaria,
@@ -59,6 +60,7 @@ class OrcamentoController {
                 status,
                 desconto,
                 valorTotal: valor_total,
+                valorTotalComDesconto: valor_total_desconto,
                 custoServicoId: servico_id,
                 consumoMedio: media_consumo,
                 concessionaria,
@@ -68,8 +70,6 @@ class OrcamentoController {
                 economiaEstimada: economia_estimada,
                 condicoesPagamento: condicoes_pagamento,
             });
-
-            console.log(equipamentos)
 
             const resultadoCadastro = await orcamentoModel.cadastrar(equipamentos);
 
@@ -112,6 +112,7 @@ class OrcamentoController {
                 status,
                 desconto = 0,
                 valor_total,
+                valor_total_desconto,                
                 servico_id,
                 media_consumo,
                 concessionaria,
@@ -128,6 +129,7 @@ class OrcamentoController {
                 status,
                 desconto,
                 valorTotal: valor_total,
+                valorTotalComDesconto: valor_total_desconto,
                 custoServicoId: servico_id,
                 consumoMedio: media_consumo,
                 concessionaria,

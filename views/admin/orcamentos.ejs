@@ -9,7 +9,148 @@
 </head>
 <body>
   <div class="container-fluid">
-    <h1>Orçamentos de Energia Solar</h1>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Orçamentos de Energia Solar</h1>
+        <button type="button" class="btn btn-secondary text-white rounded-circle" style="width: 40px; height: 40px;"
+                data-bs-toggle="modal" data-bs-target="#ajudaOrcamentosModal">
+          <i class="fas fa-question"></i>
+        </button>
+      </div>
+
+      <!-- Modal de Ajuda - Orçamentos -->
+      <div class="modal fade" id="ajudaOrcamentosModal" tabindex="-1" aria-labelledby="ajudaOrcamentosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="ajudaOrcamentosModalLabel">Ajuda desta Tela</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+              <ul class="list-unstyled">
+
+                <li class="mb-3">
+                  <button class="btn btn-primary btn-sm" > Novo Orçamento </button>
+                  <small class="text-muted">
+                    Abre um formulário para cadastrar um novo orçamento de sistema solar, incluindo dados do cliente, consumo e simulação.
+                  </small>
+                </li>
+
+                <li class="mb-3">
+                  <button class="btn btn-success btn-sm" >
+                    <i class="fas fa-file-excel me-1"></i> Exportar Excel
+                  </button>
+                  <small class="text-muted">
+                    Exporta a lista atual de orçamentos exibidos na tabela para um arquivo Excel (.xlsx) com todas as colunas visíveis.
+                  </small>
+                </li>
+
+                <li class="mb-3">
+                  <button class="btn btn-outline-secondary btn-sm" >
+                    <i class="fas fa-filter"></i> Filtro
+                  </button>
+                  <small class="text-muted">
+                    O campo de filtro deve ter um tipo de filtro escolhido para funcionar corretamente. Sem essa escolha, a busca não será realizada.
+                  </small>
+                </li>
+
+                <li class="mb-3">
+                  <button class="btn btn-secondary btn-sm" >
+                    <i class="fas fa-search me-1"></i> Buscar
+                  </button>
+                  <small class="text-muted">
+                    Realiza a busca com base no tipo de filtro e valor digitado.
+                  </small>
+                </li>
+
+                <li class="mb-3">
+                  <button class="btn btn-outline-danger btn-sm" >
+                    <i class="fas fa-times me-1"></i> Limpar
+                  </button>
+                  <small class="text-muted">
+                    Remove todos os filtros ativos e retorna a visualização da lista completa.
+                  </small>
+                </li>
+
+                <li class="mb-2">
+                  <span class="badge bg-info text-dark">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                  <small class="text-muted">
+                    Botão de <strong>visualização</strong> — exibe os detalhes completos do orçamento gerado, com informações do cliente, consumo e cálculo.
+                    <br>
+                    Após abrir a visualização, você poderá usar o botão abaixo:
+                    <br>
+                    <button id="btnExportarPdf" onclick="exportarModalParaPDF()" class="btn btn-info btn-sm mt-2" disabled>
+                      Exportar para PDF
+                    </button>
+                    <br>
+                    <small>
+                      Este botão permite exportar todas as informações exibidas na visualização para um <strong>arquivo PDF</strong>, ideal para enviar ao cliente ou arquivar.
+                    </small>
+                  </small>
+                </li>
+                <hr>
+                <li class="mb-2">
+                  <span class="badge bg-warning text-dark">
+                    <i class="fas fa-edit"></i>
+                  </span>
+                  <small class="text-muted">
+                    Botão de <strong>edição</strong> — permite editar as informações de um orçamento já salvo.  
+                    <br>
+                    <strong>Atenção:</strong> 
+                    <ul class="mb-1 mt-2">
+                      <li>Se o campo <strong>"status"</strong> for alterado para <strong>“Aprovado”</strong>, será automaticamente gerada uma <strong>instalação vinculada</strong> a este orçamento.</li>
+                      <li>Ao editar e incluir equipamentos no orçamento, os itens serão <strong>debitados do estoque</strong> automaticamente.</li>
+                    </ul>
+                  </small>
+                </li>
+                <hr>
+                <li class="mb-2">
+                  <span class="badge bg-danger">
+                    <i class="fas fa-trash-alt"></i>
+                  </span>
+                  <small class="text-muted">
+                    Botão de <strong>exclusão</strong> — remove o orçamento do sistema. Essa ação é irreversível.  
+                    <br>
+                    <strong>Atenção:</strong>
+                    <ul class="mb-1 mt-2">
+                      <li>Se o orçamento estiver com status “<strong>Aprovado</strong>”, a <strong>instalação vinculada será automaticamente excluída</strong> junto com ele.</li>
+                      <li>Todos os <strong>equipamentos associados</strong> ao orçamento serão <strong>devolvidos ao estoque</strong>.</li>
+                    </ul>
+                  </small>
+                </li>
+
+              </ul>
+
+              <hr class="my-4">
+
+              <h5 class="fw-bold">Observações Importantes</h5>
+              <ul class="list-unstyled ms-3">
+                <li class="mb-2">
+                  O controle de equipamentos está integrado ao orçamento:
+                  <ul>
+                    <li>Ao <strong>cadastrar</strong> ou <strong>editar</strong> um orçamento com equipamentos, o sistema <strong>debita automaticamente o estoque</strong>.</li>
+                    <li>Ao <strong>excluir</strong> um orçamento, os equipamentos vinculados são <strong>repostos automaticamente ao estoque</strong>.</li>
+                  </ul>
+                </li>
+                <li>
+                  É fundamental preencher corretamente os campos obrigatórios para garantir o cálculo correto e evitar falhas nos dados exportados.
+                </li>
+              </ul>
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
     <hr>
     <button class="btn btn-primary" id="btnNovoOrcamento" data-bs-toggle="modal" data-bs-target="#orcamentoModal">Novo Orçamento</button>
     <button class="btn btn-success" style="margin-left: 20px;" onclick="exportarParaExcel('tableOrcamento', 'Orcamentos')">
@@ -30,7 +171,7 @@
         
         <!-- Dropdown customizado -->
         <div class="dropdown-custom position-relative" style="min-width: 160px; flex: 1 1 auto;">
-          <button id="btnEscolherFiltro" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button">
+          <button id="btnEscolherFiltro" class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" type="button"><i class="fas fa-filter"></i>
             <span id="filtroSelecionadoTexto">
               <%= campoFiltro ? ({
                 cliente: 'Cliente',
@@ -78,14 +219,26 @@
 
             <div class="modal-body p-4">
               <input type="hidden" id="orcamentoId" name="id">
+              
+                          <!-- Div oculta de ajuda -->
+            <div id="ajudaCliente" class="alert alert-info d-none" role="alert">
+              <ul class="mb-0">
+                <li>- Antes de cadastrar um orçamento, é necessário que o cliente já esteja cadastrado no sistema.</li>
+                <li>- Para incluir equipamentos no orçamento, é preciso ter os equipamentos previamente cadastrados.</li>
+                <li>- Ao alterar o status do orçamento para <strong>"Aprovado"</strong>, uma ordem de instalação será gerada automaticamente.</li>
+              </ul>
+            </div>
 
-              <!-- Cliente -->
-              <a href="/admin/clientes" style="text-decoration: none;">
-                <div class="d-flex align-items-center gap-2 text-primary mb-2">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <a href="/admin/clientes" class="d-flex align-items-center gap-2 text-primary mb-0" style="text-decoration: none;">
                   <i class="fas fa-user me-2"></i>
                   <h5 class="mb-0">Cliente</h5>
-                </div>
-              </a>
+                </a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleAjuda()">
+                  <i class="bi bi-question-circle-fill me-1"></i>Ajuda
+                </button>
+              </div>
+
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="cliente_id" class="form-label">Nome</label>
@@ -168,7 +321,7 @@
                 </div>
                 <div class="col-md-4">
                   <label for="concessionaria" class="form-label">Concessionária</label>
-                  <input type="text" class="form-control" id="concessionaria" name="concessionaria">
+                  <input type="text" class="form-control" id="concessionaria" name="concessionaria" required>
                 </div>
                 <div class="col-md-4">
                   <label for="tipo_cliente" class="form-label">Tipo de Cliente</label>
@@ -196,6 +349,10 @@
                 <div class="col-md-4">
                   <label for="capacidade_kwp" class="form-label">Capacidade (kWp)</label>
                   <input type="number" class="form-control" id="capacidade_kwp" name="capacidade_kwp" step="0.1" required>
+                </div>
+                <div class="col-md-3">
+                  <label for="economia_estimada" class="form-label">Economia Estimada (%)</label>
+                  <input type="number" step="0.1" class="form-control" id="economia_estimada" name="economia_estimada" required>
                 </div>
               </div>
 
@@ -239,7 +396,11 @@
                 </div>
                 <div class="col-md-3">
                   <label for="desconto" class="form-label">Desconto (%)</label>
-                  <input type="number" step="0.01" class="form-control" id="desconto" name="desconto">
+                  <input type="number" step="0.01" class="form-control" id="desconto" name="desconto" required>
+                </div>
+                <div class="col-md-3">
+                  <label for="valor_total_desconto" class="form-label">Valor Total com <strong>Desconto</strong> (R$)</label>
+                  <input type="number" step="0.01" class="form-control" id="valor_total_desconto" name="valor_total_desconto">
                 </div>
                 <div class="col-md-3">
                   <label for="condicoes_pagamento" class="form-label">Condições de Pagamento</label>
@@ -249,10 +410,6 @@
                     <option value="À vista">À vista</option>
                     <option value="Financiamento">Financiamento</option>
                   </select>
-                </div>
-                <div class="col-md-3">
-                  <label for="economia_estimada" class="form-label">Economia Estimada (%)</label>
-                  <input type="number" step="0.1" class="form-control" id="economia_estimada" name="economia_estimada">
                 </div>
               </div>
 
@@ -276,45 +433,49 @@
           </form>
         </div>
       </div>
+      
     </div>
 
 
-    <!-- Tabela de Orçamentos -->
-    <table class="table table-striped" id="tableOrcamento">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Cliente</th>
-          <th>Tipo de Cliente</th>
-          <th>Forma de Pagamento</th>
-          <th>Valor Total (R$)</th>
-          <th>Custo Serviço</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="tabelaOrcamentos">
-            <% orcamentos.forEach(o => { %>
-            <tr>
-                <td><%= o.id %></td>
-                <td><%= o.cliente_nome %></td>
-                <td><%= o.tipo_cliente %></td>
-                <td><%= o.condicoes_pagamento %></td>
-                <td>R$ <%= Number(o.valor_total).toFixed(2).replace('.', ',') %></td>
-                <td><%= o.servico_descricao %></td>  <!-- Agora estamos usando o servico_descricao -->
-                <td><%= o.status %></td>
-                <td>
-                <button class="btn btn-warning btnEditarOrcamento" data-id="<%= o.id %>"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-danger btnExcluirOrcamento" data-id="<%= o.id %>"><i class="fas fa-trash"></i></button>
-                <button class="btn btn-info btnVisualizarOrcamento" data-id='<%= o.id %>'>
-                    <i class="fas fa-eye"></i>
-                </button> 
-                </td>
-            </tr>
-            <% }) %>
-     </tbody>
 
-    </table>
+    <!-- Tabela de Orçamentos -->
+    <div class="table-responsive">
+      <table class="table table-striped" id="tableOrcamento">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Tipo de Cliente</th>
+            <th>Forma de Pagamento</th>
+            <th>Valor Total (R$)</th>
+            <th>Custo Serviço</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaOrcamentos">
+              <% orcamentos.forEach(o => { %>
+              <tr>
+                  <td><%= o.id %></td>
+                  <td><%= o.cliente_nome %></td>
+                  <td><%= o.tipo_cliente %></td>
+                  <td><%= o.condicoes_pagamento %></td>
+                  <td>R$ <%= Number(o.valor_total_desconto).toFixed(2).replace('.', ',') %></td>
+                  <td><%= o.servico_descricao %></td>  <!-- Agora estamos usando o servico_descricao -->
+                  <td><%= o.status %></td>
+                  <td>
+                  <button class="btn btn-warning btnEditarOrcamento" data-id="<%= o.id %>"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-danger btnExcluirOrcamento" data-id="<%= o.id %>"><i class="fas fa-trash"></i></button>
+                  <button class="btn btn-info btnVisualizarOrcamento" data-id='<%= o.id %>'>
+                      <i class="fas fa-eye"></i>
+                  </button> 
+                  </td>
+              </tr>
+              <% }) %>
+      </tbody>
+
+      </table>
+      </div>
   </div>
 
         
@@ -386,7 +547,8 @@
                 <h6 class="text-primary"><i class="fas fa-dollar-sign me-2"></i>Financeiro</h6>
                 <ul class="list-group list-group-flush mb-3">
                     <li class="list-group-item"><strong>Valor Total:</strong> R$ <span id="v_valor_total"></span></li>
-                    <li class="list-group-item"><strong>Desconto:</strong> <span id="v_desconto"></span></li>
+                    <li class="list-group-item"><strong>Desconto:</strong> <span id="v_desconto"></span>%</li>
+                    <li class="list-group-item"><strong>Valor Total com Desconto:</strong> <span id="v_total_desconto"></span></li>
                     <li class="list-group-item"><strong>Condições de Pagamento:</strong> <span id="v_condicoes_pagamento"></span></li>
                     <li class="list-group-item"><strong>Economia Estimada:</strong> <span id="v_economia_estimada"></span></li>
                     <li class="list-group-item"><strong>Serviço Incluso:</strong> <span id="v_servico_descricao"></span></li>
@@ -398,6 +560,13 @@
 </div>
 
 </div>
+          <script>
+            function toggleAjuda() {
+              const ajuda = document.getElementById('ajudaCliente');
+              ajuda.classList.toggle('d-none');
+            }
+          </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -473,6 +642,7 @@
     
             // Financeiro
             document.getElementById('v_valor_total').innerText = Number(orc.valor_total).toFixed(2);
+            document.getElementById('v_total_desconto').innerText = Number(orc.valor_total_desconto).toFixed(2);
             document.getElementById('v_desconto').innerText = orc.desconto;
             document.getElementById('v_condicoes_pagamento').innerText = orc.condicoes_pagamento;
             document.getElementById('v_economia_estimada').innerText = orc.economia_estimativa;
@@ -492,140 +662,128 @@
 
 
   <script>
-      function atualizarValorTotal() {
-          let totalEquipamentos = 0;
+    function atualizarValorTotal() {
+      let totalEquipamentos = 0;
 
-          document.querySelectorAll('.row.equipamento-item').forEach(row => {
-              const qtdInput = row.querySelector('input[name$=".quantidade"]');
-              const valorInput = row.querySelector('input[name$=".valorUnitario"]');
+      document.querySelectorAll('.row.equipamento-item').forEach(row => {
+        const qtdInput = row.querySelector('input[name$=".quantidade"]');
+        const valorInput = row.querySelector('input[name$=".valorUnitario"]');
 
-              const quantidade = parseFloat(qtdInput?.value) || 0;
-              const valorUnitario = parseFloat(valorInput?.value) || 0;
+        const quantidade = parseFloat(qtdInput?.value) || 0;
+        const valorUnitario = parseFloat(valorInput?.value) || 0;
 
-              totalEquipamentos += quantidade * valorUnitario;
-          });
+        totalEquipamentos += quantidade * valorUnitario;
+      });
 
-          // Captura o valor do serviço selecionado
-          const servicoSelect = document.getElementById('servico_id');
-          const servicoSelecionado = servicoSelect?.selectedOptions[0];
-          const valorServico = parseFloat(servicoSelecionado?.dataset.valor) || 0;
+      // Valor do serviço selecionado
+      const servicoSelect = document.getElementById('servico_id');
+      const servicoSelecionado = servicoSelect?.selectedOptions[0];
+      const valorServico = parseFloat(servicoSelecionado?.dataset.valor) || 0;
 
-          // Captura o valor do desconto
-          const descontoInput = document.getElementById('desconto');
-          const descontoPercentual = parseFloat(descontoInput?.value) || 0;
+      // Valor do desconto
+      const descontoInput = document.getElementById('desconto');
+      const descontoPercentual = parseFloat(descontoInput?.value) || 0;
 
-          // Calcula o total geral antes do desconto
-          let totalGeral = totalEquipamentos + valorServico;
+      // Total bruto (sem desconto)
+      const totalBruto = totalEquipamentos + valorServico;
 
-          // Aplica o desconto
-          const valorDesconto = totalGeral * (descontoPercentual / 100);
-          totalGeral -= valorDesconto;
+      // Valor com desconto
+      const valorDesconto = totalBruto * (descontoPercentual / 100);
+      const totalComDesconto = totalBruto - valorDesconto;
 
-          document.getElementById('valor_total').value = totalGeral.toFixed(2);
+      // Atualiza os campos
+      document.getElementById('valor_total').value = totalBruto.toFixed(2);
+      document.getElementById('valor_total_desconto').value = totalComDesconto.toFixed(2);
+    }
+
+    document.getElementById('desconto').addEventListener('input', atualizarValorTotal);
+
+    const equipamentos = <%- JSON.stringify(equipamentos) %>;
+    let equipamentoIndex = 0;
+
+    document.getElementById('addEquipamento').addEventListener('click', function () {
+      const container = document.getElementById('equipamentosContainer');
+
+      const selectId = `equipamento_id_${equipamentoIndex}`;
+      const valorInputId = `valor_unitario_${equipamentoIndex}`;
+      const estoqueId = `estoque_${equipamentoIndex}`;
+
+      const div = document.createElement('div');
+      div.className = 'row mb-2 align-items-end equipamento-item';
+      div.innerHTML = `
+        <div class="col-md-4">
+          <label class="form-label">Equipamento</label>
+          <select class="form-select equipamento-select" 
+            name="equipamentos[${equipamentoIndex}].equipamentoId" 
+            id="${selectId}" 
+            data-valor-id="${valorInputId}" 
+            data-estoque-id="${estoqueId}">
+            <option value="">Selecione</option>
+            ${equipamentos.map(eq => 
+              `<option value="${eq.id}" data-valor="${eq.valor}" data-estoque="${eq.quantidade_estoque}">
+                ${eq.nome} - ${eq.marca} - ${eq.modelo}
+              </option>`
+            ).join('')}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Qtd. Estoque</label>
+          <input type="number" class="form-control" id="${estoqueId}" disabled>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Quantidade</label>
+          <input type="number" name="equipamentos[${equipamentoIndex}].quantidade" class="form-control" min="1" value="1">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Valor Unitário (R$)</label>
+          <input type="number" name="equipamentos[${equipamentoIndex}].valorUnitario" class="form-control" id="${valorInputId}" step="0.01" readonly>
+        </div>
+        <div class="col-md-1 text-end">
+          <button type="button" class="btn btn-danger btnRemoverEquipamento">&times;</button>
+        </div>
+      `;
+
+      container.appendChild(div);
+      atualizarValorTotal();
+      equipamentoIndex++;
+    });
+
+    // Atualiza automaticamente valor unitário e total ao trocar o equipamento
+    document.addEventListener('change', function (e) {
+      if (e.target.classList.contains('equipamento-select')) {
+        const selectedOption = e.target.selectedOptions[0];
+        const valor = selectedOption.getAttribute('data-valor');
+        const estoque = selectedOption.getAttribute('data-estoque');
+
+        const valorInputId = e.target.getAttribute('data-valor-id');
+        const estoqueId = e.target.getAttribute('data-estoque-id');
+
+        document.getElementById(valorInputId).value = valor || '';
+        document.getElementById(estoqueId).value = estoque || '';
+
+        atualizarValorTotal();
       }
+    });
 
-      // Garante que o desconto atualiza o total
-      document.getElementById('desconto').addEventListener('input', atualizarValorTotal);
-
-
-
-
-        const equipamentos = <%- JSON.stringify(equipamentos) %>;
-        let equipamentoIndex = 0;
-        document.getElementById('addEquipamento').addEventListener('click', function () {
-          const container = document.getElementById('equipamentosContainer');
-
-          // Evento para atualizar valor e estoque
-          document.addEventListener('change', function (e) {
-            if (e.target.classList.contains('equipamento-select')) {
-              const selectedOption = e.target.selectedOptions[0];
-              const valor = selectedOption.getAttribute('data-valor');
-              const estoque = selectedOption.getAttribute('data-estoque');
-
-              const valorInputId = e.target.getAttribute('data-valor-id');
-              const estoqueId = e.target.getAttribute('data-estoque-id');
-
-              document.getElementById(valorInputId).value = valor || '';
-              document.getElementById(estoqueId).value = estoque || '';
-            }
-          });
-
-          const selectId = `equipamento_id_${equipamentoIndex}`;
-          const valorInputId = `valor_unitario_${equipamentoIndex}`;
-          const estoqueId = `estoque_${equipamentoIndex}`;
-
-          const div = document.createElement('div');
-          div.className = 'row mb-2 align-items-end equipamento-item';
-          div.innerHTML = `
-            <div class="col-md-4">
-              <label class="form-label">Equipamento</label>
-              <select class="form-select equipamento-select" 
-                name="equipamentos[${equipamentoIndex}].equipamentoId" 
-                id="${selectId}" 
-                data-valor-id="${valorInputId}" 
-                data-estoque-id="${estoqueId}">
-                <option value="">Selecione</option>
-                ${equipamentos.map(eq => 
-                  `<option value="${eq.id}" data-valor="${eq.valor}" data-estoque="${eq.quantidade_estoque}">
-                    ${eq.nome} - ${eq.marca} - ${eq.modelo}
-                  </option>`
-                ).join('')}
-              </select>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Qtd. Estoque</label>
-              <input type="number" class="form-control" id="${estoqueId}" disabled>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Quantidade</label>
-              <input type="number" name="equipamentos[${equipamentoIndex}].quantidade" class="form-control" min="1" value="1">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label">Valor Unitário (R$)</label>
-              <input type="number" name="equipamentos[${equipamentoIndex}].valorUnitario" class="form-control" id="${valorInputId}" step="0.01" readonly>
-            </div>
-            <div class="col-md-1 text-end">
-              <button type="button" class="btn btn-danger btnRemoverEquipamento">&times;</button>
-            </div>
-          `;
-
-          // ADICIONA A DIV CRIADA AO DOM!
-          container.appendChild(div);
-          atualizarValorTotal(); // <-- Adicionado aqui
-          equipamentoIndex++;
-
-
-          // Incrementa o índice para o próximo equipamento
-          equipamentoIndex++;
-        });
-
-
-
-
-    // Remover equipamento
+    // Remover equipamento e atualizar total
     document.addEventListener('click', function (e) {
       if (e.target.classList.contains('btnRemoverEquipamento')) {
         e.target.closest('.row').remove();
-        atualizarValorTotal(); // Atualiza após remoção
+        atualizarValorTotal();
       }
     });
-        // Atualizar o total ao mudar o serviço
-      document.getElementById('servico_id').addEventListener('change', atualizarValorTotal);
 
-      // Atualizar o total ao mudar quantidade de equipamentos
-      document.addEventListener('input', function (e) {
-        if (e.target.name && e.target.name.includes('.quantidade')) {
-          atualizarValorTotal();
-        }
-      });
+    // Atualizar total ao mudar o serviço
+    document.getElementById('servico_id').addEventListener('change', atualizarValorTotal);
 
-      // Atualizar o total ao trocar o equipamento (porque muda o valor unitário)
-      document.addEventListener('change', function (e) {
-        if (e.target.classList.contains('equipamento-select')) {
-          atualizarValorTotal();
-        }
-  });
+    // Atualizar total ao mudar quantidade de equipamentos
+    document.addEventListener('input', function (e) {
+      if (e.target.name && e.target.name.includes('.quantidade')) {
+        atualizarValorTotal();
+      }
+    });
   </script>
+
 
   <script>
     // Toggle do dropdown

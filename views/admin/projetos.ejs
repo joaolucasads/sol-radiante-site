@@ -9,19 +9,83 @@
 </head>
 <body>
     <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>Projetos Concluídos</h1>
+        <button type="button" class="btn btn-secondary text-white rounded-circle" style="width: 40px; height: 40px;"
+                data-bs-toggle="modal" data-bs-target="#ajudaProjetosModal">
+            <i class="fas fa-question"></i>
+        </button>
+    </div>
+
+
+        <!-- Modal de ajuda - Projetos Concluídos -->
+        <div class="modal fade" id="ajudaProjetosModal" tabindex="-1" aria-labelledby="ajudaProjetosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="ajudaProjetosModalLabel">Ajuda desta Tela</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <ul class="list-unstyled">
+                    <strong>Observação:</strong> Ao cadastrar um projeto com imagem e link preenchidos, ele será <strong>exibido na página principal do site</strong>. 
+                    Verifique se não há espaçamentos indevidos ou campos vazios para evitar falhas na exibição. <br> <br>
+                <li class="mb-3">
+                    <button class="btn btn-primary btn-sm"> Novo Projeto </button>
+                    <small class="text-muted">
+                    Abre um formulário para cadastrar um novo projeto concluído, com descrição, imagem e link.<br>
+                    </small>
+                </li>
+
+                <li class="mb-2">
+                    <span class="badge bg-warning text-dark">
+                    <i class="fas fa-edit"></i>
+                    </span>  
+                    <small class="text-muted">
+                    Botão de <strong>edição</strong> — permite alterar a descrição e imagem do projeto.
+                    </small>
+                </li>
+
+                <li class="mb-2">
+                    <span class="badge bg-danger">
+                    <i class="fas fa-trash-alt"></i>
+                    </span>  
+                    <small class="text-muted">
+                    Botão de <strong>exclusão</strong> — remove permanentemente o projeto da base de dados e da exibição no site.
+                    </small>
+                </li>
+
+                </ul>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+
+            </div>
+        </div>
+        </div>
+
         <hr>
         <button class="btn btn-primary" id="btnNovoProjeto">Novo Projeto</button>
 
         <!-- Modal de Cadastro/Edição de Projeto -->
         <div class="modal fade" id="projetoModal" tabindex="-1" aria-labelledby="modalProjetoLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
+                
                 <form class="modal-content" id="formProjeto" enctype="multipart/form-data">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalProjetoLabel">Cadastro de Projeto</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        
                     </div>
-                    <div class="modal-body">
+                    <div style="padding: 10px">
+                        <strong>Observação:</strong> Ao cadastrar um projeto com imagem e link preenchidos, ele será <strong>exibido na página principal do site</strong>. 
+                    Verifique se não há espaçamentos indevidos ou campos vazios para evitar falhas na exibição. <br> <br>
+                    </div>
+                    <div class="modal-body" style="margin-top: -30px;">
                         <input type="hidden" id="idProjeto" name="id">
                         <input type="hidden" name="imagemAtual" id="imagemAtual">
                         <div class="mb-3">
@@ -47,36 +111,38 @@
         </div>
 
         <!-- Tabela de Projetos -->
-        <table class="table table-striped mt-4">
-            <thead>
-                <tr>
-                    <th>Imagem</th>
-                    <th>Link</th>
-                    <th>Data de Cadastro</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaProjetos">
-                <% projetos.forEach(p => { %>
+        <div class="table-responsive">
+            <table class="table table-striped mt-4">
+                <thead>
                     <tr>
-                        <td><img src="/uploads/projetos/<%= p.imagem %>" alt="Imagem Projeto" width="100"></td>
-                        <td><%= p.descricao %></td>
-                        <td><%= new Date(p.createdAt).toLocaleDateString() %></td>
-                        <td>
-                            <button class="btn btn-warning btnEditarProjeto"
-                                data-id="<%= p.id %>"
-                                data-descricao="<%= p.descricao %>"
-                                data-imagem="<%= p.imagem %>">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-danger btnExcluirProjeto" data-id="<%= p.id %>">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
+                        <th>Imagem</th>
+                        <th>Link</th>
+                        <th>Data de Cadastro</th>
+                        <th>Ações</th>
                     </tr>
-                <% }) %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="tabelaProjetos">
+                    <% projetos.forEach(p => { %>
+                        <tr>
+                            <td><img src="/uploads/projetos/<%= p.imagem %>" alt="Imagem Projeto" width="100"></td>
+                            <td><%= p.descricao %></td>
+                            <td><%= new Date(p.createdAt).toLocaleDateString() %></td>
+                            <td>
+                                <button class="btn btn-warning btnEditarProjeto"
+                                    data-id="<%= p.id %>"
+                                    data-descricao="<%= p.descricao %>"
+                                    data-imagem="<%= p.imagem %>">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btnExcluirProjeto" data-id="<%= p.id %>">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

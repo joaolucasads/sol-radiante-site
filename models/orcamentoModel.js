@@ -6,6 +6,7 @@ class OrcamentoModel {
     #status;
     #desconto;
     #valorTotal;
+    #valorTotalComDesconto;
     #custoServicoId;
     #consumoMedio;
     #concessionaria;
@@ -27,6 +28,9 @@ class OrcamentoModel {
 
     get valorTotal() { return this.#valorTotal; }
     set valorTotal(value) { this.#valorTotal = value; }
+
+    get valorTotalComDesconto() { return this.#valorTotalComDesconto; }
+    set valorTotalComDesconto(value) { this.#valorTotalComDesconto = value; }
 
     get custoServicoId() { return this.#custoServicoId; }
     set custoServicoId(value) { this.#custoServicoId = value; }
@@ -57,6 +61,7 @@ class OrcamentoModel {
         status,
         desconto,
         valorTotal,
+        valorTotalComDesconto,
         custoServicoId,
         consumoMedio,
         concessionaria,
@@ -70,6 +75,7 @@ class OrcamentoModel {
         this.#status = status;
         this.#desconto = desconto;
         this.#valorTotal = valorTotal;
+        this.#valorTotalComDesconto = valorTotalComDesconto;
         this.#custoServicoId = custoServicoId;
         this.#consumoMedio = consumoMedio;
         this.#concessionaria = concessionaria;
@@ -83,13 +89,12 @@ class OrcamentoModel {
 
     async cadastrar(listaEquipamentos) {
 
-        
            const sql = `
             INSERT INTO orcamentos (
-                cliente_id, status, desconto, valor_total, CustoServico_id,
+                cliente_id, status, desconto, valor_total, valor_total_desconto, CustoServico_id,
                 media_consumo_kwh, concessionaria, tipo_cliente, tipo_sistema,
                 capacidade_kwp, economia_estimativa, condicoes_pagamento
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const valores = [
@@ -97,6 +102,7 @@ class OrcamentoModel {
                 this.#status,
                 this.#desconto,
                 this.#valorTotal,
+                this.#valorTotalComDesconto,
                 this.#custoServicoId,
                 this.#consumoMedio,
                 this.#concessionaria,
@@ -106,7 +112,7 @@ class OrcamentoModel {
                 this.#economiaEstimada,
                 this.#condicoesPagamento
             ];
-            
+
             const resultado = await banco.ExecutaComando(sql, valores);
             const idOrcamento = resultado.insertId;
         
@@ -180,6 +186,7 @@ class OrcamentoModel {
                 o.status,
                 o.condicoes_pagamento,
                 o.valor_total,
+                o.valor_total_desconto,
                 o.cliente_id,
                 o.CustoServico_id
             FROM orcamentos o
@@ -260,7 +267,7 @@ class OrcamentoModel {
     async filtrar(campo, valor) {
         let sql = `
             SELECT o.id, c.nome_completo AS cliente_nome, cs.descricao AS servico_descricao, 
-                   o.status, o.valor_total, c.telefone AS cliente_telefone, 
+                   o.status, o.valor_total, o.valor_total_desconto, c.telefone AS cliente_telefone, 
                    o.tipo_cliente, o.cliente_id, o.condicoes_pagamento
             FROM orcamentos o
             INNER JOIN clientes c ON c.id = o.cliente_id
@@ -293,7 +300,7 @@ class OrcamentoModel {
 
         const sqlUpdate = `
             UPDATE orcamentos SET
-                cliente_id = ?, status = ?, desconto = ?, valor_total = ?, CustoServico_id = ?,
+                cliente_id = ?, status = ?, desconto = ?, valor_total = ?, valor_total_desconto = ?, CustoServico_id = ?,
                 media_consumo_kwh = ?, concessionaria = ?, tipo_cliente = ?, tipo_sistema = ?,
                 capacidade_kwp = ?, economia_estimativa = ?, condicoes_pagamento = ?
             WHERE id = ?
@@ -304,6 +311,7 @@ class OrcamentoModel {
             this.#status,
             this.#desconto,
             this.#valorTotal,
+            this.#valorTotalComDesconto,
             this.#custoServicoId,
             this.#consumoMedio,
             this.#concessionaria,

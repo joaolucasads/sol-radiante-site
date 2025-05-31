@@ -26,8 +26,108 @@
 </head>
 <body>
   <div class="container-fluid">
-    <h1>Gerenciamento de Usuários</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Gerenciamento de Usuários</h1>
+      <button type="button" class="btn btn-secondary text-white rounded-circle" style="width: 40px; height: 40px;"
+              data-bs-toggle="modal" data-bs-target="#ajudaUsuariosModal">
+        <i class="fas fa-question"></i>
+      </button>
+    </div>
+
     <hr>
+
+    <!-- Modal de ajuda - Usuários -->
+    <div class="modal fade" id="ajudaUsuariosModal" tabindex="-1" aria-labelledby="ajudaUsuariosModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="ajudaUsuariosModalLabel">Ajuda desta Tela</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+
+          <div class="modal-body">
+            <ul class="list-unstyled">
+
+              <li class="mb-3">
+                <button class="btn btn-primary btn-sm"> Novo Usuário </button>
+                <small class="text-muted">
+                  Abre um formulário para cadastrar um novo usuário no sistema, definindo nome, e-mail e perfil de acesso (administrador ou operacional).
+                </small>
+              </li>
+
+              <li class="mb-3">
+                <button class="btn btn-outline-secondary btn-sm">
+                  <i class="fas fa-filter"></i> Filtro
+                </button>
+                <small class="text-muted">
+                  O campo de filtro só funciona após a seleção de um tipo de filtro. Sem essa escolha, o filtro não será aplicado.
+                </small>
+              </li>
+
+              <li class="mb-3">
+                <button class="btn btn-secondary btn-sm">
+                  <i class="fas fa-search me-1"></i> Buscar
+                </button>
+                <small class="text-muted">
+                  Após selecionar o tipo de filtro e preencher o valor, clique neste botão para efetuar a busca.
+                </small>
+              </li>
+
+              <li class="mb-3">
+                <button class="btn btn-outline-danger btn-sm">
+                  <i class="fas fa-times me-1"></i> Limpar
+                </button>
+                <small class="text-muted">
+                  Limpa o conteúdo pesquisado e a seleção do tipo de filtro.
+                </small>
+              </li>
+
+              <li class="mb-2">
+                <span class="badge bg-warning text-dark">
+                  <i class="fas fa-edit"></i>
+                </span>
+                <small class="text-muted">
+                  Botão de <strong>edição</strong> — permite alterar o nome, e-mail ou perfil de um usuário já cadastrado.
+                </small>
+              </li>
+
+              <li class="mb-2">
+                <span class="badge bg-danger">
+                  <i class="fas fa-trash-alt"></i>
+                </span>
+                <small class="text-muted">
+                  Botão de <strong>exclusão</strong> — remove permanentemente o usuário do sistema.
+                </small>
+              </li>
+              <hr class="my-4">
+
+              <h5 class="fw-bold">Perfis de Usuário</h5>
+              <ul class="list-unstyled ms-3">
+                <li class="mb-2">
+                  <span class="badge bg-dark">Administrador</span>
+                  <small class="text-muted d-block mt-1">
+                    Possui acesso completo a todas as funcionalidades do sistema, incluindo cadastros, edições e exclusões de qualquer tipo de dado.
+                  </small>
+                </li>
+                <li>
+                  <span class="badge bg-secondary">Operacional</span>
+                  <small class="text-muted d-block mt-1">
+                    Possui acesso limitado apenas a funções operacionais específicas definidas pelo administrador. Não pode acessar funções administrativas.
+                  </small>
+                </li>
+              </ul>
+            </ul>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <div style="margin-bottom: 15px; display: flex;">
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal" id="btnNovoUsuario">
         Novo Usuário
@@ -102,7 +202,7 @@
     <div class="dropdown-custom position-relative" style="min-width: 140px; flex: 1 1 auto;">
       <button id="btnEscolherFiltro" 
               class="btn btn-outline-secondary d-flex align-items-center justify-content-between px-3 py-2 w-100" 
-              type="button">
+              type="button"><i class="fas fa-filter"></i>
         <span id="filtroSelecionadoTexto">
           <%= campoFiltro ? ({
             id: 'ID',
@@ -139,7 +239,7 @@
 
 
     <!-- Tabela de usuários -->
-    <div>
+    <div class="table-responsive">
       <table class="table table-striped" id="tableUsuario">
         <thead>
           <tr>

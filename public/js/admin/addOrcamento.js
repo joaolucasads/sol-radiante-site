@@ -33,14 +33,31 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (dados.media_consumo <= 0) {
-            Swal.fire('Erro!', 'O campo "Média de Consumo" deve ser maior que zero.', 'error');
+        if(!dados.condicoes_pagamento){
+            Swal.fire('Erro!', 'O campo "Condições de pagamento" deve ser preenchido.', 'error');
             return;
         }
 
-        if (dados.valor_total < 0 || dados.capacidade_kwp < 0 || dados.desconto < 0) {
+        if (dados.media_consumo < 0) {
+            Swal.fire('Erro!', 'O campo "Média de Consumo" deve ser maior que zero.', 'error');
+            return;
+        }
+        if (dados.capacidade_kwp < 0) {
+            Swal.fire('Erro!', 'O campo "Capacidade (kWp)" deve ser maior que zero.', 'error');
+            return;
+        }
+        if (dados.economia_estimada < 0) {
+            Swal.fire('Erro!', 'O campo "Economia Estimada" deve ser maior que zero.', 'error');
+            return;
+        }
+
+        if (dados.valor_total < 0 || dados.desconto < 0) {
             Swal.fire('Erro!', 'Valor Total, Capacidade (kWp) e Desconto não podem ser negativos.', 'error');
             return;
+        }
+
+        if(dados.valor_total_desconto < 0){
+            Swal.fire('Erro!', 'Valor total com Desconto não pode ser negativo!')
         }
 
         // Coletar equipamentos manualmente
