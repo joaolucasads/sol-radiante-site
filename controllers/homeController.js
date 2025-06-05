@@ -10,25 +10,6 @@ class HomeController {
         
     }
 
-    contatoView(req, res) {
-        res.render('site/contato', { layout: 'site/layout' });
-    }
-
-    sobreView(req, res) {
-        res.render('site/sobre', { layout: 'site/layout' });
-    }
-
-    async servicosView(req, res) {
-        let projetos = new ProjetoConcluidoModel();
-        const listaProjetos = await projetos.listar();
-        
-        res.render('site/servicos', { layout: 'site/layout', listaProjetos: listaProjetos });
-    }
-
-
-    portfolioView(req, res) {
-        res.render('site/portfolio', { layout: 'site/layout' });
-    }
 
 }
 

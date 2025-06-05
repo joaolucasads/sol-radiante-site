@@ -39,6 +39,7 @@
   #contatoForm button[type="submit"]:hover {
     background-color: #d97706;
   }
+  
 </style>
 
 <section id="hero" class="hero section dark-background">
@@ -50,7 +51,7 @@
         <div class="container">
           <h2>Sol Radiante: Economia e Sustentabilidade para Você!</h2>
           <p>Economize na conta de luz e ajude o planeta! 💡☀️ Invista em energia solar e tenha autonomia, sustentabilidade e mais dinheiro no bolso. Fale conosco!</p>
-          <a href="/contato" class="btn-get-started">QUERO ECONOMIZAR</a>
+          <a href="#contact" class="btn-get-started">QUERO ECONOMIZAR</a>
         </div>
       </div><!-- End Carousel Item -->
 
@@ -59,16 +60,16 @@
         <div class="container">
           <h2>Solução Inteligente: Energia Solar para sua Casa ou Empresa!</h2>
           <p>Gere sua própria energia e economize de verdade! ☀️💰 Invista em energia solar e reduza sua conta de luz. Faça parte dessa revolução!</p>
-          <a href="/sobre" class="btn-get-started">SAIBA MAIS</a>
+          <a href="#about" class="btn-get-started">SAIBA MAIS</a>
         </div>
       </div><!-- End Carousel Item -->
 
       <div class="carousel-item">
         <img src="/site-template/img/hero-carousel/hero-carousel-3.jpg" alt="">
         <div class="container">
-          <h2>Temporibus autem quibusdam</h2>
-          <p>Beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt omnis iste natus error sit voluptatem accusantium.</p>
-          <a href="/servicos" class="btn-get-started">Read More</a>
+          <h2>Energia Solar é o Futuro: Invista Hoje!</h2>
+          <p>Transforme luz do sol em economia! ☀️🔋 Com nosso sistema de energia solar, você reduz custos e valoriza seu imóvel. Não fique para trás nessa revolução verde!</p>
+          <a href="#promocoes" class="btn-get-started">VEJA NOSSAS SOLUÇÕES</a>
         </div>
       </div><!-- End Carousel Item -->
 
@@ -168,43 +169,148 @@
 
   </section><!-- /Services Section -->
 
-  <!-- Portfolio Section -->
-  <section id="portfolio" class="portfolio section">
+  <!-- Carousel de Promoções -->
+<section id="promocoes" class="section light-background position-relative">
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Promoções</h2>
+    <p>Aproveite nossas ofertas exclusivas em energia solar. Qualidade garantida com preços acessíveis!</p>
+  </div>
 
+  <div id="promocoesCarousel" class="carousel slide position-relative" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <% for (let i = 0; i < listaProjetos.length; i += 3) { %>
+        <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+          <div class="d-flex justify-content-center gap-4 flex-wrap">
+            <% for (let j = i; j < i + 3 && j < listaProjetos.length; j++) { %>
+              <a href="/uploads/projetos/<%= listaProjetos[j].imagem %>" 
+                 data-gallery="galeria-promocoes" 
+                 class="glightbox preview-link">
+                <img src="/uploads/projetos/<%= listaProjetos[j].imagem %>" 
+                     alt="Promoção" 
+                     class="img-fluid rounded shadow" 
+                     style="max-width: 400px; height: 400px; object-fit: cover;">
+              </a>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Botões de navegação (setas laranjas mais próximas) -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#promocoesCarousel" data-bs-slide="prev"
+      style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); z-index: 2;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="orange" class="bi bi-chevron-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+      </svg>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#promocoesCarousel" data-bs-slide="next"
+      style="position: absolute; top: 50%; right: 0; transform: translateY(-50%); z-index: 2;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="orange" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+      </svg>
+    </button>
+    
+  </div>
+   <!-- Botão de contato estilizado e centralizado -->
+<div class="text-center mt-4">
+  <a href="https://api.whatsapp.com/send?phone=5518998249164&text=Oi!%20Gostaria%20de%20um%20or%C3%A7amento%20gratuito!%20%F0%9F%98%84" 
+     target="_blank" 
+     class="btn btn-primary text-white fw-bold px-4 py-2 shadow rounded-pill" 
+     style="font-size: 1.2rem;">
+    <i class="bi bi-whatsapp me-2"></i> Faça já seu orçamento!
+  </a>
+</div>
+
+</section>
+
+
+<section id="portfolio" class="portfolio section">
+  <div class="container">
     <!-- Section Title -->
     <div class="container section-title" data-aos="fade-up">
       <h2>Serviços Realizados</h2>
       <p>Trabalhamos com eficiência, segurança e compromisso para entregar soluções de energia solar de alta qualidade.</p>
     </div><!-- End Section Title -->
 
+    <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+      <!-- Filters -->
+      <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
+        <li data-filter="*" class="filter-active">Todos</li>
+        <li data-filter=".filter-app">Limpezas</li>
+        <li data-filter=".filter-product">Instalações</li>
+      </ul><!-- End Portfolio Filters -->
 
-    <div class="container">
+      <!-- Portfolio Items -->
+      <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
 
-      <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+        <!-- Limpezas -->
+        <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
+          <img src="/site-template/img/masonry-portfolio/masonry-portfolio-1.jpg" class="img-fluid" alt="">
+          <div class="portfolio-info">
+            <h4>Limpeza 1</h4>
+            <p>Limpeza de painéis solares</p>
+            <a href="/site-template/img/masonry-portfolio/masonry-portfolio-1.jpg"  data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+          </div>
+        </div>
 
-        <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
-          <% listaProjetos.forEach(p => { %>
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
-              
-              <img src="/uploads/projetos/<%= p.imagem %>" class="img-fluid" alt="">
-              <div class="portfolio-info">
-                <a href="/uploads/projetos/<%= p.imagem %>" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<%= p.descricao %>" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-              </div>
-              
-            </div><!-- End Portfolio Item -->
-          <% }) %>
+        <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
+          <img src="/site-template/img/masonry-portfolio/masonry-portfolio-4.jpg" class="img-fluid" alt="">
+          <div class="portfolio-info">
+            <h4>Limpeza 2</h4>
+            <p>Manutenção e higienização</p>
+            <a href="/site-template/img/masonry-portfolio/masonry-portfolio-4.jpg"  data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+          </div>
+        </div>
 
-        </div><!-- End Portfolio Container -->
+        <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
+          <img src="/site-template/img/masonry-portfolio/masonry-portfolio-7.jpg" class="img-fluid" alt="">
+          <div class="portfolio-info">
+            <h4>Limpeza 3</h4>
+            <p>Serviço preventivo</p>
+            <a href="/site-template/img/masonry-portfolio/masonry-portfolio-7.jpg"  data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+          </div>
+        </div>
 
-      </div>
+        <!-- Instalações -->
+        <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
+          <img src="/site-template/img/masonry-portfolio/instalacao1.png" class="img-fluid" alt="">
+          <div class="portfolio-info">
+            <h4>Instalação 1</h4>
+            <p>Sistema residencial</p>
+            <a href="/site-template/img/masonry-portfolio/instalacao1.png"  data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+          </div>
+        </div>
 
+        <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
+          <img src="/site-template/img/masonry-portfolio/instalacao2.png" class="img-fluid" alt="">
+          <div class="portfolio-info">
+            <h4>Instalação 2</h4>
+            <p>Comércio local</p>
+            <a href="/site-template/img/masonry-portfolio/instalacao2.png"  data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
+          <img src="/site-template/img/masonry-portfolio/instalacao3.png" class="img-fluid" alt="">
+          <div class="portfolio-info">
+            <h4>Instalação 3</h4>
+            <p>Projeto industrial</p>
+            <a href="/site-template/img/masonry-portfolio/instalacao3.png" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+          </div>
+        </div>
+
+
+      </div><!-- End Portfolio Container -->
     </div>
-
-  </section><!-- /Portfolio Section -->
-
-  <!-- Page Title -->
-
+  </div>
+</section><!-- /Portfolio Section -->
 
     <!-- Contact Section -->
     <section id="contact" class="contact section">
@@ -370,13 +476,18 @@
               </div>
 
             <!-- Botões de navegação -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#feedbackCarousel" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Anterior</span>
+            <button class="carousel-control-prev" type="button" data-bs-target="#promocoesCarousel" data-bs-slide="prev"
+              style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); z-index: 2;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="orange" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+              </svg>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#feedbackCarousel" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Próximo</span>
+
+            <button class="carousel-control-next" type="button" data-bs-target="#promocoesCarousel" data-bs-slide="next"
+              style="position: absolute; top: 50%; right: 0; transform: translateY(-50%); z-index: 2;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="orange" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+              </svg>
             </button>
           </div>
         </div>

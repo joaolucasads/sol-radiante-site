@@ -7,6 +7,7 @@ const usuarioController = require('../controllers/usuarioController');
 const ProjetoConcluidoController = require('../controllers/ProjetoConcluidoController');
 const InstalacaoController = require('../controllers/instalacaoController')
 const ContatoController = require('../controllers/contatoController');
+const RecuperacaoSenhaController = require('../controllers/recuperacaoSenhaController');
 
 const multer = require('multer');
 const path = require('path');
@@ -47,6 +48,15 @@ router.get("/login", (req, res) => {
   res.clearCookie("usuarioLogado"); // ou req.session.destroy() se estiver usando sessions
   res.redirect("/admin/login");
 });
+
+
+let ctrlRec = new RecuperacaoSenhaController();
+
+// Recuperação de senha
+router.get("/esqueci-minha-senha", ctrlRec.formularioSolicitarView); // Formulário de solicitação
+router.post("/esqueci-minha-senha", ctrlRec.solicitarToken);         // Envio do token por e-mail
+router.get("/redefinir-senha/:token", ctrlRec.formularioRedefinirView); // Formulário de nova senha
+router.post("/redefinir-senha", ctrlRec.redefinirSenha);                 // Redefinição no banco
 
 
 // Usuários
