@@ -1,6 +1,7 @@
 const UsuarioModel = require("../models/usuarioModel");
 const RecuperacaoModel = require("../models/recuperacaoSenhaModel");
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 //const bcrypt = require("bcrypt.js");
 
 //const { ociHttpRequest } = require("../ociHttpRequest");
@@ -8,7 +9,8 @@ const crypto = require("crypto");
 class RecuperacaoSenhaController {
 
     formularioSolicitarView(req, res) {
-        res.render('admin/esqueci-minha-senha', { layout: 'admin/login', msg: null });
+
+        res.render('admin/esqueci-minha-senha', { layout: false, msg: null });
     }
 
     async solicitarToken(req, res) {
@@ -63,27 +65,74 @@ class RecuperacaoSenhaController {
         res.render('admin/redefinir-senha', { layout: 'admin/login', token });
     }
 
-    async redefinirSenha(req, res) {
-        const { token, novaSenha } = req.body;
-
-        const recModel = new RecuperacaoModel();
-        const registro = await recModel.obterPorToken(token);
-
-        if (!registro || new Date(registro.expira_em) < new Date()) {
-            return res.send("Token inválido ou expirado.");
+    gerarSequenciaNumeros(totalNumeros) {
+        const sequencia = [];
+        while (sequencia.length < totalNumeros) {
+            const numero = Math.floor(Math.random() * 100) + 1; // Gera número entre 1 e 100
+            if (!sequencia.includes(numero)) { // Verifica se o número já está na sequência
+                sequencia.push(numero);
+            }
         }
+        return sequencia;
+    }
 
-        const senhaCriptografada = await bcrypt.hash(novaSenha, 10);
+    async redefinirSenha(req, res) {
 
-        const usuarioModel = new UsuarioModel();
-        await usuarioModel.atualizarSenha(registro.usuario_id, senhaCriptografada);
+        let email = req.body.email;
+        let usuario = new UsuarioModel();
+        usuario = await usuario.obterPorEmail(email);
+        if(usuario != null) {
 
-        await recModel.excluirToken(token);
 
-        res.render('admin/login', {
-            layout: 'admin/login',
-            msg: "Senha redefinida com sucesso. Faça login novamente."
-        });
+            let token = "";
+            while (token.length < 6) {
+                const numero = Math.floor(Math.random() * 100) + 1; // Gera número entre 1 e 100
+                token += numero.toString();
+            }
+            let recupera = new RecuperacaoModel();
+            const dataAtual = new Date();
+            dataAtual.setHours(dataAtual.getHours() + 1);
+            recupera.usuarioId = usuario.usuarioId;
+            recupera.token = token;
+            recupera.expiraEm = dataAtual;
+
+            if(await recupera.cadastrar() > 0) {
+
+                // Configuração do transportador de e-mail
+                let transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'joaodrivelucas@gmail.com', // Seu e-mail
+                        pass: 'zbpd owki dbln hvdg' // Sua senha ou app password
+                    }
+                });
+
+                // Detalhes do e-mail
+                let mailOptions = {
+                    from: 'joaodrivelucas@gmail.com', // Endereço de e-mail do remetente
+                    to: email,
+                    subject: "Email teste",
+                    //text: 'Conteúdo do e-mail em texto simples',
+                    html: `Prezado usuário, utilize o código abaixo para prosseguir com a redefinição de senha<br><br><b>Código de redefinição: ${token}<b>`
+                };
+
+                // Enviar e-mail
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    }
+                    console.log('E-mail enviado: ' + info.response);
+                });
+
+                res.render('admin/redefinir-senha', { layout: false, msg: "Código de recuperação enviado!" });
+            }
+            else {
+                res.render('admin/esqueci-minha-senha', { layout: false, msg: "Erro ao processar recuperação de senha!" });
+            }
+        }
+        else {
+            res.render('admin/esqueci-minha-senha', { layout: false, msg: "E-mail inválido!" });
+        }
     }
 }
 

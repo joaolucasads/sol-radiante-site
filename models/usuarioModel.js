@@ -84,6 +84,19 @@ class UsuarioModel {
     
         return null;
     }
+
+    async obterPorEmail(email) {
+        let sql = "SELECT * FROM usuarios WHERE email = ?";
+        let valores = [email];
+        let rows = await banco.ExecutaComando(sql, valores);
+    
+        if(rows.length > 0) {
+            let row = rows[0];
+            return new UsuarioModel(row["id"], row["nome"], row["senha"], row["perfil_id"], row["email"]);
+        }
+    
+        return null;
+    }
     
     
     async cadastrar() {

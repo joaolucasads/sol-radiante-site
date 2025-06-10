@@ -44,7 +44,7 @@ class RecuperacaoSenhaModel {
 
     async cadastrar() {
         const sql = `
-            INSERT INTO recuperacao_senhas (usuario_id, token, expira_em)
+            INSERT INTO senha_reset_tokens (usuarioId, token, expiresAt)
             VALUES (?, ?, ?)
         `;
         const valores = [this.#usuarioId, this.#token, this.#expiraEm];
