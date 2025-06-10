@@ -69,7 +69,7 @@ router.delete("/usuarios", auth.verificarUsuarioLogado, auth.apenasAdmin, ctrlUs
 // Contatos
 let ctrlCont = new ContatoController();
 router.get("/contatos", auth.verificarUsuarioLogado, auth.apenasAdmin, ctrlCont.contatoView);
-router.post("/contatos", auth.verificarUsuarioLogado, auth.apenasAdmin, ctrlCont.cadastrar);
+router.post("/contatos", ctrlCont.cadastrar);
 router.delete("/contatos/:id", auth.verificarUsuarioLogado, auth.apenasAdmin, ctrlCont.excluir);
 
 // Clientes

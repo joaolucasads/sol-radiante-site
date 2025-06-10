@@ -72,7 +72,7 @@ class clienteController {
         if (resultado) {
             res.send({ ok: true });
         } else {
-            res.send({ ok: false, msg: "Erro ao excluir cliente!" });
+            res.send({ ok: false, msg: "Erro ao excluir cliente, Verifique se não existe orçamento atrelado a ele." });
         }
     }
 

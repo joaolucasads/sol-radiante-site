@@ -111,7 +111,7 @@
 
             <div class="watch-video d-flex align-items-center position-relative">
               <i class="bi bi-play-circle"></i>
-              <a href="https://www.youtube.com/" class="glightbox stretched-link">Assista o vídeo</a>
+              <a href="https://www.youtube.com/watch?v=fJmLBMw-5AE" class="glightbox stretched-link">Assista o vídeo</a>
             </div>
           </div>
 
@@ -176,6 +176,7 @@
   <div class="container section-title" data-aos="fade-up">
     <h2>Promoções</h2>
     <p>Aproveite nossas ofertas exclusivas em energia solar. Qualidade garantida com preços acessíveis!</p>
+    <p>Clique nas nossas promoções para saber MAIS DETALHES!</p>
   </div>
 
   <div id="promocoesCarousel" class="carousel slide position-relative" data-bs-ride="carousel">
@@ -187,11 +188,12 @@
               <a href="/uploads/projetos/<%= listaProjetos[j].imagem %>" 
                  data-gallery="galeria-promocoes" 
                  class="glightbox preview-link">
-                <img src="/uploads/projetos/<%= listaProjetos[j].imagem %>" 
+                <a href="<%= listaProjetos[j].descricao %>" title="Mais Detalhes" class="details-link"><img src="/uploads/projetos/<%= listaProjetos[j].imagem %>" 
                      alt="Promoção" 
                      class="img-fluid rounded shadow" 
-                     style="max-width: 400px; height: 400px; object-fit: cover;">
+                     style="max-width: 400px; height: 400px; object-fit: cover;"></a>
               </a>
+              
             <% } %>
           </div>
         </div>
@@ -233,6 +235,8 @@
     <div class="container section-title" data-aos="fade-up">
       <h2>Serviços Realizados</h2>
       <p>Trabalhamos com eficiência, segurança e compromisso para entregar soluções de energia solar de alta qualidade.</p>
+      <p>Video de uma das nossas maiores instalações já feitas Instalação Comercial | Mercado Costa - [INDIANA SP]</p>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/H67B56Fod14?si=Y9sdRMWiWes-a8iQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </div><!-- End Section Title -->
 
     <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
@@ -253,7 +257,7 @@
             <h4>Limpeza 1</h4>
             <p>Limpeza de painéis solares</p>
             <a href="/site-template/img/masonry-portfolio/masonry-portfolio-1.jpg"  data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+            <a href="https://www.instagram.com/stories/highlights/18017700514583671/" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
           </div>
         </div>
 
@@ -263,7 +267,7 @@
             <h4>Limpeza 2</h4>
             <p>Manutenção e higienização</p>
             <a href="/site-template/img/masonry-portfolio/masonry-portfolio-4.jpg"  data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+            <a href="https://www.instagram.com/stories/highlights/18017700514583671/" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
           </div>
         </div>
 
@@ -273,7 +277,7 @@
             <h4>Limpeza 3</h4>
             <p>Serviço preventivo</p>
             <a href="/site-template/img/masonry-portfolio/masonry-portfolio-7.jpg"  data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+            <a href="https://www.instagram.com/stories/highlights/18017700514583671/" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
           </div>
         </div>
 
@@ -284,7 +288,7 @@
             <h4>Instalação 1</h4>
             <p>Sistema residencial</p>
             <a href="/site-template/img/masonry-portfolio/instalacao1.png"  data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+            <a href="https://www.instagram.com/p/DJpPmLsOSIj/" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
           </div>
         </div>
 
@@ -294,7 +298,7 @@
             <h4>Instalação 2</h4>
             <p>Comércio local</p>
             <a href="/site-template/img/masonry-portfolio/instalacao2.png"  data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+            <a href="https://www.instagram.com/p/DIj1lBYya-8/" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
           </div>
         </div>
 
@@ -302,9 +306,9 @@
           <img src="/site-template/img/masonry-portfolio/instalacao3.png" class="img-fluid" alt="">
           <div class="portfolio-info">
             <h4>Instalação 3</h4>
-            <p>Projeto industrial</p>
+            <p>Instalação Residencial</p>
             <a href="/site-template/img/masonry-portfolio/instalacao3.png" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-            <a href="portfolio-details.html" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+            <a href="https://www.instagram.com/p/DJpPv5xugQ_/" title="Mais Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
           </div>
         </div>
 

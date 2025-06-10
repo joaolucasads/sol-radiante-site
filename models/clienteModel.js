@@ -100,9 +100,26 @@ class ClienteModel {
     }
 
     async excluir(id) {
-        let sql = "DELETE FROM clientes WHERE id = ?";
-        return await banco.ExecutaComandoNonQuery(sql, [id]);
+    // Verifica se o cliente está vinculado a algum orçamento
+    let sqlVerifica = "SELECT COUNT(*) as total FROM orcamentos WHERE cliente_id = ?";
+    let resultado = await banco.ExecutaComando(sqlVerifica, [id]);
+
+    if (resultado[0].total > 0) {
+        // Cliente vinculado a orçamento, não pode ser excluído
+        return { sucesso: false, mensagem: "Cliente vinculado a um orçamento e não pode ser excluído." };
     }
+
+    // Cliente não está vinculado a orçamentos, pode excluir
+    let sqlDelete = "DELETE FROM clientes WHERE id = ?";
+    let result = await banco.ExecutaComandoNonQuery(sqlDelete, [id]);
+
+    if (result) {
+        return { sucesso: true, mensagem: "Cliente excluído com sucesso." };
+    } else {
+        return { sucesso: false, mensagem: "Erro ao excluir cliente." };
+    }
+}
+
 
     async editar() {
         let sql = `
