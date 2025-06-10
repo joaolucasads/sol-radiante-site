@@ -13,52 +13,13 @@ class RecuperacaoSenhaController {
         res.render('admin/esqueci-minha-senha', { layout: false, msg: null });
     }
 
-    async solicitarToken(req, res) {
-        const email = req.body.email;
-
-        const usuarioModel = new UsuarioModel();
-        const usuario = await usuarioModel.obterPorEmail(email);
-
-        if (!usuario) {
-            return res.render('admin/esqueci-minha-senha', {
-                layout: 'admin/login',
-                msg: "Email não encontrado."
-            });
-        }
-
-        const token = crypto.randomBytes(32).toString('hex');
-        const expiracao = new Date(Date.now() + 60 * 60 * 1000); // 1h
-
-        const recModel = new RecuperacaoModel();
-        await recModel.salvarToken(usuario.usuarioId, token, expiracao);
-
-        // Montar o link
-        const link = `http://localhost:3000/admin/redefinir-senha/${token}`;
-
-        // Enviar email via Oracle Cloud
-        const emailPayload = {
-            senderEmail: 'seuemail@gmail.com',
-            senderName: 'Suporte Sistema',
-            recipient: email,
-            subject: 'Recuperação de Senha',
-            body: `Clique no link para redefinir sua senha: ${link}`
-        };
-
-        await ociHttpRequest('URL_DA_FUNCAO_OCI', 'POST', emailPayload);
-
-        res.render('admin/esqueci-minha-senha', {
-            layout: 'admin/login',
-            msg: "Email enviado com instruções para redefinir a senha."
-        });
-    }
-
     async formularioRedefinirView(req, res) {
         const token = req.params.token;
 
         const recModel = new RecuperacaoModel();
         const registro = await recModel.obterPorToken(token);
 
-        if (!registro || new Date(registro.expira_em) < new Date()) {
+        if (!registro || new Date(registro.expiresAt) < new Date()) {
             return res.send("Token inválido ou expirado.");
         }
 
@@ -111,7 +72,7 @@ class RecuperacaoSenhaController {
                 let mailOptions = {
                     from: 'joaodrivelucas@gmail.com', // Endereço de e-mail do remetente
                     to: email,
-                    subject: "Email teste",
+                    subject: "Codigo de recuperação",
                     //text: 'Conteúdo do e-mail em texto simples',
                     html: `Prezado usuário, utilize o código abaixo para prosseguir com a redefinição de senha<br><br><b>Código de redefinição: ${token}<b>`
                 };
@@ -134,6 +95,36 @@ class RecuperacaoSenhaController {
             res.render('admin/esqueci-minha-senha', { layout: false, msg: "E-mail inválido!" });
         }
     }
+           
+
+        async redefinirSenhaPersistir(req, res) {
+            const { codigo, novaSenha } = req.body;
+
+            const recModel = new RecuperacaoModel();
+            const registro = await recModel.obterPorToken(codigo);
+
+            if (!registro) {
+                return res.render('admin/redefinir-senha', { layout: 'admin/login', msg: "Código inválido." });
+            }
+
+            if (new Date(registro.expiraAt) < new Date()) {
+                return res.render('admin/redefinir-senha', { layout: 'admin/login', msg: "Código expirado." });
+            }
+
+            const usuarioModel = new UsuarioModel();
+            const usuario = await usuarioModel.obter(registro.usuarioId);
+
+            if (!usuario) {
+                return res.render('admin/redefinir-senha', { layout: 'admin/login', msg: "Usuário não encontrado." });
+            }
+
+            await usuarioModel.atualizarSenha(usuario.usuarioId, novaSenha); // Crie esse método no seu model
+
+            await recModel.excluirToken(codigo); // Ou marque como usado, se preferir
+
+            res.render('admin/login', { layout: 'admin/login', msgS: "Senha redefinida com sucesso. Faça o login." });
+        }
+
 }
 
 module.exports = RecuperacaoSenhaController;

@@ -54,22 +54,25 @@ class RecuperacaoSenhaModel {
 
     async obterPorToken(token) {
         const sql = `
-            SELECT * FROM recuperacao_senhas
-            WHERE token = ? AND expira_em > NOW()
-            LIMIT 1
+            SELECT * FROM senha_reset_tokens WHERE token = ?;
         `;
         const rows = await banco.ExecutaComando(sql, [token]);
 
         if (rows.length > 0) {
             const r = rows[0];
-            return new RecuperacaoSenhaModel(r.id, r.usuario_id, r.token, r.expira_em);
+            return new RecuperacaoSenhaModel(r.id, r.usuarioId, r.token, r.expiraEm);
         }
 
         return null;
     }
 
+    async excluirToken(token) {
+        const sql = "DELETE FROM senha_reset_tokens WHERE token = ?";
+        await banco.ExecutaComandoNonQuery(sql, [token]);
+    }
+
     async excluirPorUsuarioId(usuarioId) {
-        const sql = "DELETE FROM recuperacao_senhas WHERE usuario_id = ?";
+        const sql = "DELETE FROM senha_reset_tokens WHERE usuarioId = ?";
         return await banco.ExecutaComandoNonQuery(sql, [usuarioId]);
     }
 }

@@ -54,9 +54,9 @@ let ctrlRec = new RecuperacaoSenhaController();
 
 // Recuperação de senha
 router.get("/esqueci-minha-senha", ctrlRec.formularioSolicitarView); // Formulário de solicitação
-router.post("/esqueci-minha-senha", ctrlRec.solicitarToken);         // Envio do token por e-mail
 router.get("/redefinir-senha/:token", ctrlRec.formularioRedefinirView); // Formulário de nova senha
 router.post("/redefinir-senha", ctrlRec.redefinirSenha);                 // Redefinição no banco
+router.post("/redefinirSenha", ctrlRec.redefinirSenhaPersistir);                 // Redefinição no banco
 
 
 // Usuários

@@ -24,9 +24,9 @@ class adminController {
 
     async login(req, res) {
         let msg = "";
-        if (req.body.nome && req.body.password) {
+        if (req.body.email && req.body.password) {
             let usuario = new UsuarioModel();
-            usuario = await usuario.obterPorUsuarioSenha(req.body.nome, req.body.password);
+            usuario = await usuario.obterPorUsuarioSenha(req.body.email, req.body.password);
             if (usuario) {
                 res.cookie("usuarioLogado", usuario.usuarioId);
                 return res.redirect("/admin/inicio");

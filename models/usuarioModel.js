@@ -56,10 +56,10 @@ class UsuarioModel {
         this.#usuarioEmail = usuarioEmail;
     }
 
-    async obterPorUsuarioSenha(nome, senha) {
-        let sql = "select * from usuarios where nome = ? and senha = ?";
+    async obterPorUsuarioSenha(email, senha) {
+        let sql = "select * from usuarios where email = ? and senha = ?";
 
-        let valores = [nome, senha];
+        let valores = [email, senha];
 
         let rows = await banco.ExecutaComando(sql, valores);
 
@@ -135,6 +135,15 @@ class UsuarioModel {
         let result = await banco.ExecutaComandoNonQuery(sql, valores);
         return result;
     } 
+
+    async atualizarSenha(usuarioId, novaSenhaCriptografada) {
+        const sql = "UPDATE usuarios SET senha = ? WHERE id = ?";
+        const valores = [novaSenhaCriptografada, usuarioId];
+        const result = await banco.ExecutaComandoNonQuery(sql, valores);
+        return result.affectedRows > 0;
+    }
+
+
 
     async filtrar(campo, valor) {
         // Lista de campos válidos para filtro
